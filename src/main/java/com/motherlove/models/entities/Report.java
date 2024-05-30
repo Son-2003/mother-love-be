@@ -34,10 +34,6 @@ public class Report {
     private LocalDateTime lastModifiedDate;
 
     @ManyToOne
-    @JoinColumn(name = "staffId", nullable = false)
-    private Staff staff;
-
-    @ManyToOne
-    @JoinColumn(name = "customerId", nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 }

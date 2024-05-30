@@ -34,9 +34,12 @@ public class Order {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDate;
 
+    @OneToOne(mappedBy = "order")
+    private OrderCancel orderCancel;
+
     @ManyToOne
-    @JoinColumn(name = "customerId", nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderDetail> orderDetails;
@@ -46,7 +49,4 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderVoucher> orderVouchers;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private Set<OrderCancel> orderCancels;
 }

@@ -1,23 +1,19 @@
 package com.motherlove.security;
 
-import com.motherlove.models.entities.Customer;
-import com.motherlove.models.entities.Staff;
-import com.motherlove.models.entities.UserType;
-import com.motherlove.repositories.CustomerRepository;
-import com.motherlove.repositories.StaffRepository;
+import com.motherlove.models.entities.User;
+import com.motherlove.repositories.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,31 +21,19 @@ import java.util.Collection;
 @Setter
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final CustomerRepository customerRepository;
-    private final StaffRepository staffRepository;
-    private UserType userType;
+    private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String staffAccountOrEmailOrPhone) throws UsernameNotFoundException {
-        System.out.println(userType);
+    public UserDetails loadUserByUsername(String userNameOrEmailOrPhone) throws UsernameNotFoundException {
         //allow user to log in by username or email
-        if(userType==UserType.CUSTOMER){
-            Customer customer = customerRepository.findByCustomerAccountOrEmailOrPhone(staffAccountOrEmailOrPhone, staffAccountOrEmailOrPhone, staffAccountOrEmailOrPhone).orElseThrow(
-                    ()-> new UsernameNotFoundException("User not found with username or email: "+ staffAccountOrEmailOrPhone)
-            );
-            SimpleGrantedAuthority adminAuthority = new SimpleGrantedAuthority(UserType.CUSTOMER.toString());
-            Collection<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(adminAuthority);
-            return new User(staffAccountOrEmailOrPhone, customer.getPassword(), authorities);
-        }else if(userType==UserType.STAFF){
-            Staff staff = staffRepository.findByStaffAccountOrEmailOrPhone(staffAccountOrEmailOrPhone, staffAccountOrEmailOrPhone, staffAccountOrEmailOrPhone).orElseThrow(
-                    ()-> new UsernameNotFoundException("User not found with username or email: "+ staffAccountOrEmailOrPhone)
-            );
-            SimpleGrantedAuthority adminAuthority = new SimpleGrantedAuthority(UserType.STAFF.toString());
-            Collection<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(adminAuthority);
-            return new User(staffAccountOrEmailOrPhone, staff.getPassword(), authorities);
-        }
-        return null;
+        User user = userRepository.findByUserNameOrEmailOrPhone(userNameOrEmailOrPhone, userNameOrEmailOrPhone, userNameOrEmailOrPhone)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username or email: " + userNameOrEmailOrPhone));
+
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getRoleName());
+
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(authority);
+
+        return new org.springframework.security.core.userdetails.User(userNameOrEmailOrPhone, user.getPassword(), authorities);
     }
 }

@@ -12,18 +12,18 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "staff")
-public class Staff {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long staffId;
+    private Long userId;
 
     @Column(nullable = false)
-    private String staffAccount;
+    private String userName;
 
     @Column(nullable = false)
-    private String staffName;
+    private String fullName;
 
     @Column(nullable = false)
     private String password;
@@ -38,6 +38,9 @@ public class Staff {
     private int status;
 
     @Column(nullable = false)
+    private int point;
+
+    @Column(nullable = false)
     private String image;
 
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -46,9 +49,28 @@ public class Staff {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Order> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<CustomerVoucher> customerVouchers;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Feedback> feedbacks;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Address> addresses;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<PointTransaction> pointTransactions;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Report> reports;
 
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Blog> blogs;
+
+    @ManyToOne
+    @JoinColumn(name = "roleId", nullable = false)
+    private Role role;
 }

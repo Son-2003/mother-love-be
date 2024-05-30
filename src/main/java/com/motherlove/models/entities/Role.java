@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -11,24 +12,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "feedback")
-public class Feedback {
+@Table(name = "role")
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long feedbackId;
+    private Long roleId;
 
     @Column(nullable = false)
-    private int rating;
-
-    @Column(nullable = false)
-    private String comment;
-
-    @Column(nullable = false)
-    private String image;
-
-    @Column(nullable = false)
-    private LocalDateTime feedbackDate;
+    private String roleName;
 
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdDate;
@@ -36,11 +28,6 @@ public class Feedback {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDate;
 
-    @ManyToOne
-    @JoinColumn(name = "productId", nullable = false)
-    private Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    private Set<User> users;
 }

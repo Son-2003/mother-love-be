@@ -35,8 +35,8 @@ public class Blog {
     private LocalDateTime lastModifiedDate;
 
     @ManyToOne
-    @JoinColumn(name = "staffId", nullable = false)
-    private Staff staff;
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
     private Set<ProductBlog> productBlogs;
