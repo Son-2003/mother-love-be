@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryController {
@@ -26,7 +24,7 @@ public class CategoryController {
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<CategoryDto> addCategory(@RequestBody CategoryDto categoryDto) {
         CategoryDto savedCategory = categoryService.addCategory(categoryDto);
@@ -51,7 +49,7 @@ public class CategoryController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("{id}")
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto, @PathVariable(name = "id") long categoryId){
         return ResponseEntity.ok(categoryService.updateCategory(categoryDto, categoryId));
@@ -59,7 +57,7 @@ public class CategoryController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") long id){
         categoryService.deleteCategory(id);
