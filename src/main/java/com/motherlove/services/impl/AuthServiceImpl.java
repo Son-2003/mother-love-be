@@ -8,6 +8,7 @@ import com.motherlove.models.payload.responseModel.JWTAuthResponse;
 import com.motherlove.repositories.UserRepository;
 import com.motherlove.security.JwtTokenProvider;
 import com.motherlove.services.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,19 +23,13 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ModelMapper mapper;
-
-    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, ModelMapper mapper) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.mapper = mapper;
-    }
 
     @Override
     public JWTAuthResponse authenticateUser(LoginDto loginDto) {

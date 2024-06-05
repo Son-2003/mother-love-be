@@ -4,7 +4,7 @@ import com.motherlove.security.JwtAuthenticationEntryPoint;
 import com.motherlove.security.JwtAuthenticationFilter;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,16 +29,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         bearerFormat = "JWT",
         scheme = "bearer"
 )
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Autowired
-    public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
