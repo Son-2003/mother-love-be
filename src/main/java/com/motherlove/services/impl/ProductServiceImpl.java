@@ -1,9 +1,10 @@
 package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.Product;
+import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.ProductDto;
-import com.motherlove.repositories.ProductRepository;
-import com.motherlove.services.ProductService;
+import com.motherlove.repositories.IProductRepository;
+import com.motherlove.services.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -16,9 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService {
-    private final ProductRepository productRepository;
+public class ProductServiceImpl implements IProductService {
+
+    private final IProductRepository productRepository;
     private final ModelMapper mapper;
+
+
+    private ProductDto mapToDto(Product product) {
+        return mapper.map(product, ProductDto.class);
+    }
 
     @Override
     public Page<ProductDto> getAllProducts(int pageNo, int pageSize, String sortBy, String sortDir) {
@@ -29,7 +36,35 @@ public class ProductServiceImpl implements ProductService {
         return products.map(this::mapToDto);
     }
 
-    private ProductDto mapToDto(Product product) {
-        return mapper.map(product, ProductDto.class);
+    @Override
+    @Transactional
+    public ProductDto updateProduct(ProductDto productDto) {
+        if (!productRepository.existsById(productDto.getProductId())) {
+            throw new ResourceNotFoundException(Product.class.getName(), "ID", productDto.getProductId());
+        }
+        Product product = mapper.map(productDto, Product.class);
+        return mapToDto(productRepository.save(product));
+    }
+
+    @Override
+    @Transactional
+    public ProductDto deleteProduct(long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Product.class.getName(), "ID", id));
+        productRepository.delete(product);
+        return mapToDto(product);
+    }
+
+    @Override
+    public ProductDto getProductById(long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Product.class.getName(), "ID", id));
+        return mapToDto(product);
+    }
+
+    @Override
+    @Transactional
+    public ProductDto addProduct(ProductDto productDto) {
+        productDto.setProductId(null);
+        Product savedProduct = productRepository.save(mapper.map(productDto, Product.class));
+        return mapToDto(savedProduct);
     }
 }
