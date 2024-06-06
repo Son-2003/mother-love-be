@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +21,11 @@ public class ProductServiceImpl implements ProductService {
     private final ModelMapper mapper;
 
     @Override
-    public Page<ProductDto> getAllProducts(int page, int size) {
-        Page<Product> products = productRepository.findAll(PageRequest.of(page - 1, size));
+    public Page<ProductDto> getAllProducts(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<Product> products = productRepository.findAll(pageable);
         return products.map(this::mapToDto);
     }
 
