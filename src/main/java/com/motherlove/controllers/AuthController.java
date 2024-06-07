@@ -22,7 +22,7 @@ public class AuthController {
             description = "Login user by UserName, Email, Phone"
     )
     @PostMapping("/user/login")
-    public ResponseEntity<Object> authenticationUser(@RequestBody @Valid LoginDto loginDto){
+    public ResponseEntity<Object> authenticationUser(@Valid @RequestBody LoginDto loginDto){
             JWTAuthResponse jwtAuthResponse = authService.authenticateUser(loginDto);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + jwtAuthResponse.getAccessToken());
