@@ -1,18 +1,16 @@
 package com.motherlove.models.payload.responseModel;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class JWTAuthResponse {
     private String accessToken;
+    private String message;
     private String tokenType = "Bearer";
-    public JWTAuthResponse(String accessToken) {
+    public JWTAuthResponse(String accessToken, String message) {
+        this.message = message;
         this.accessToken = accessToken;
         this.tokenType = "Bearer";
     }
