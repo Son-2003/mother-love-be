@@ -6,6 +6,7 @@ import com.motherlove.services.CategoryService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryController {
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @Autowired
     public CategoryController(CategoryService categoryService) {
@@ -26,7 +27,7 @@ public class CategoryController {
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<CategoryDto> addCategory(@RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<CategoryDto> addCategory(@Valid @RequestBody CategoryDto categoryDto) {
         CategoryDto savedCategory = categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }

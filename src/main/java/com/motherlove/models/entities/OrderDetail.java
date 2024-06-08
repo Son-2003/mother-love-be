@@ -24,6 +24,9 @@ public class OrderDetail {
     @Column(nullable = false)
     private float unitPrice;
 
+    @Column(nullable = false)
+    private float totalPrice;
+
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdDate;
 

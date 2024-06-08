@@ -3,7 +3,6 @@ package com.motherlove.advice;
 import com.motherlove.models.payload.error.ErrorDetail;
 import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -49,15 +48,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
-                                                                  HttpStatusCode status, WebRequest request) {
-        //map each field name to its error message
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
+        // Map each field name to its error message
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", status.value());
 
         // Get all validation errors
-        List<String> errors = ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .toList();
 
         body.put("errors", errors);
 
