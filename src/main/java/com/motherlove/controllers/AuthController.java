@@ -32,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<Object> signup(@RequestBody SignupDto signupDto){
+    public ResponseEntity<Object> signup(@Valid@RequestBody SignupDto signupDto){
         JWTAuthResponse response = authService.signupMember(signupDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -45,10 +45,4 @@ public class AuthController {
     public ResponseEntity<Object> getInfo() {
         return ResponseEntity.ok(authService.getCustomerInfo());
     }
-
-//    @PostMapping("/logout")
-//    public ResponseEntity<Object> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
-//        authenticationService.logout(request);
-//        return ApiResponse.<Void>builder().build();
-//    }
 }

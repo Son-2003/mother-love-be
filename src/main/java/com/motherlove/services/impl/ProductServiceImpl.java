@@ -3,7 +3,7 @@ package com.motherlove.services.impl;
 import com.motherlove.models.entities.Product;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.ProductDto;
-import com.motherlove.repositories.IProductRepository;
+import com.motherlove.repositories.ProductRepository;
 import com.motherlove.services.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
 
-    private final IProductRepository productRepository;
+    private final ProductRepository productRepository;
     private final ModelMapper mapper;
 
 

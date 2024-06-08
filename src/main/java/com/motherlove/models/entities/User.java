@@ -35,6 +35,9 @@ public class User {
     private String phone;
 
     @Column(nullable = false)
+    private String gender;
+
+    @Column(nullable = false)
     private int status;
 
     @Column(nullable = false)

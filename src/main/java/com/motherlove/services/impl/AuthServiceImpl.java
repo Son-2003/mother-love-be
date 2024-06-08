@@ -71,9 +71,10 @@ public class AuthServiceImpl implements AuthService {
         user.setUserName(signupDto.getUsername());
         user.setEmail(signupDto.getEmail());
         user.setPassword(passwordEncoder.encode(signupDto.getPassword()));
-        user.setFullName("abc");
-        user.setPhone("abc");
-        user.setImage("abc");
+        user.setFullName(signupDto.getFullName());
+        user.setPhone(signupDto.getPhone());
+        user.setGender(signupDto.getGender());
+        user.setImage("https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg");
         user.setStatus(1);
         user.setPoint(0);
         user.setCreatedDate(LocalDateTime.now());

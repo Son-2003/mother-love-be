@@ -3,7 +3,7 @@ package com.motherlove.services.impl;
 import com.motherlove.models.entities.Brand;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.BrandDto;
-import com.motherlove.repositories.IBrandRepository;
+import com.motherlove.repositories.BrandRepository;
 import com.motherlove.services.IBrandService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BrandService implements IBrandService {
 
-    private final IBrandRepository brandRepository;
+    private final BrandRepository brandRepository;
     private final ModelMapper mapper;
     
     public BrandDto mapEntityToDto(Brand entity){
