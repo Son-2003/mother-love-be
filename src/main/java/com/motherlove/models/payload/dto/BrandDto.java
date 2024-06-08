@@ -1,20 +1,23 @@
 package com.motherlove.models.payload.dto;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BrandDto {
-    private Long brandId;
 
-    @NotEmpty(message = "Username or email cannot be blank")
-    @Size(min = 8, message = "Username, email or phone must have at least 8 characters")
+    private Long brandId;
     private String brandName;
+    private String image;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
+    private List<ProductDto> products;
 }
