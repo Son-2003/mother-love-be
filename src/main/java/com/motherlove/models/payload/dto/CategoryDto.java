@@ -19,11 +19,8 @@ import java.util.Set;
 public class CategoryDto {
     private Long categoryId;
 
-    @NotEmpty(message = "Username or email cannot be blank")
-    @Size(min = 8, message = "Username, email or phone must have at least 8 characters")
+    @NotEmpty(message = "Category's name cannot be blank")
+    @Size(min = 2, message = "Category's name must have at least 2 characters")
     private String categoryName;
 
-    private LocalDateTime createdDate;
-
-    private LocalDateTime lastModifiedDate;
 }
