@@ -70,6 +70,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Blog> blogs;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Token> tokens;
+
     @ManyToOne
     @JoinColumn(name = "roleId", nullable = false)
     private Role role;

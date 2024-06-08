@@ -1,9 +1,11 @@
 package com.motherlove.security;
 
 import com.motherlove.models.exception.MotherLoveApiException;
+import com.motherlove.repositories.TokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -14,12 +16,15 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
     @Value("${app.jwt-secret}")
     private String jwtSecret;
 
     @Value("${app.jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
+
+    private final TokenRepository tokenRepository;
 
     public String generateToken(Authentication authentication) {
         UserDetails username = (UserDetails) authentication.getPrincipal();
@@ -68,5 +73,10 @@ public class JwtTokenProvider {
                 throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "JWT claims string is empty");
             }
         }
+    }
+
+    public boolean isValid(String token){
+        boolean isValidToken =  tokenRepository.findByToken(token).isLoggedOut();
+        return isValidToken;
     }
 }
