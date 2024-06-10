@@ -1,5 +1,6 @@
 package com.motherlove.models.payload.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,6 @@ public class BrandDto {
     private String image;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
+    @JsonIgnore
     private List<ProductDto> products;
 }

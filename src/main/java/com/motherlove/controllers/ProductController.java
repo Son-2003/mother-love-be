@@ -7,9 +7,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final IProductService productService;
+    private final ModelMapper mapper;
 
     @Operation(summary = "Get List Products", description = "Get List Products")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
@@ -56,6 +60,16 @@ public class ProductController {
     public ResponseEntity<ProductDto> deleteCategory(@PathVariable(name = "id") long id) {
         ProductDto deletedProductDto = productService.deleteProduct(id);
         return ResponseEntity.ok(deletedProductDto);
+    }
+
+    @GetMapping("/search-by-brand-category")
+    public ResponseEntity<List<ProductDto>> searchProducstByBrandAndCategory(@RequestParam(name = "brand", required = false) Long brandId,
+                                                                             @RequestParam(name = "category", required = false) Long categoryId) {
+        return ResponseEntity.ok(
+                productService.getProductsByBrandAndCategory(brandId, categoryId)
+                        .stream()
+                        .map(x -> mapper.map(x, ProductDto.class))
+                        .toList());
     }
 
 }
