@@ -79,8 +79,6 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(1);
         user.ifPresent(order::setUser);
-        order.setCreatedDate(LocalDateTime.now());
-        order.setLastModifiedDate(LocalDateTime.now());
 
 
         //Create OrderDetail
@@ -95,8 +93,6 @@ public class OrderServiceImpl implements OrderService {
                 orderDetail.setOrder(order);
                 orderDetail.setProduct(product.get());
                 orderDetail.setTotalPrice(product.get().getPrice() * item.getQuantity());
-                orderDetail.setCreatedDate(LocalDateTime.now());
-                orderDetail.setLastModifiedDate(LocalDateTime.now());
                 totalAmount = totalAmount + (product.get().getPrice() * item.getQuantity());
             }
             orderDetails.add(orderDetail);
