@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryController {
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @Autowired
     public CategoryController(CategoryService categoryService) {
@@ -27,6 +27,7 @@ public class CategoryController {
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
+
     public ResponseEntity<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto) {
         CategoryDto savedCategory = categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);

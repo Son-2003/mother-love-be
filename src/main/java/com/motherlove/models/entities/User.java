@@ -2,6 +2,9 @@ package com.motherlove.models.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -12,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 public class User {
 
@@ -35,17 +39,22 @@ public class User {
     private String phone;
 
     @Column(nullable = false)
+    private String gender;
+
+    @Column(nullable = false)
     private int status;
 
     @Column(nullable = false)
     private int point;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 65535)
     private String image;
 
+    @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdDate;
 
+    @LastModifiedDate
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDate;
 
@@ -69,6 +78,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Blog> blogs;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Token> tokens;
 
     @ManyToOne
     @JoinColumn(name = "roleId", nullable = false)

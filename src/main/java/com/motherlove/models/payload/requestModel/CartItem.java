@@ -1,4 +1,4 @@
-package com.motherlove.models.payload.dto;
+package com.motherlove.models.payload.requestModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetailDto {
-    private Long orderDetailId;
+public class CartItem {
+    private Long productId;
     private int quantity;
-    private float unitPrice;
-    private float totalPrice;
-    private ProductDto product;
 }
