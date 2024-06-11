@@ -3,6 +3,8 @@ package com.motherlove.services;
 import com.motherlove.models.payload.dto.ProductDto;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface ProductService {
     Page<ProductDto> getAllProducts(int pageNo, int pageSize, String sortBy, String sortDir);
 
@@ -13,4 +15,6 @@ public interface ProductService {
     ProductDto getProductById(long id);
 
     ProductDto addProduct(ProductDto productDto);
+
+    List<ProductDto> getProductsByBrandAndCategory(Long brandId, Long categoryId);
 }

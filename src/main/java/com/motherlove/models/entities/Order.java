@@ -47,12 +47,13 @@ public class Order {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order")
     private Set<OrderDetail> orderDetails;
 
     @OneToOne(mappedBy = "order")
     private PaymentHistory paymentHistory;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "order")
     private Set<OrderVoucher> orderVouchers;
 }

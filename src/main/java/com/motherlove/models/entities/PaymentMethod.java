@@ -34,6 +34,6 @@ public class PaymentMethod {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "paymentMethod")
     private Set<PaymentHistory> paymentHistories;
 }
