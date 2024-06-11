@@ -3,8 +3,8 @@ package com.motherlove.services.impl;
 import com.motherlove.models.entities.Brand;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.BrandDto;
+import com.motherlove.models.payload.responseModel.BrandResponse;
 import com.motherlove.repositories.BrandRepository;
-import com.motherlove.services.IBrandService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class BrandService implements IBrandService {
+public class BrandServiceImpl implements com.motherlove.services.BrandService {
 
     private final BrandRepository brandRepository;
     private final ModelMapper mapper;
@@ -25,14 +25,18 @@ public class BrandService implements IBrandService {
         return mapper.map(entity, BrandDto.class);
     }
 
+    public BrandResponse mapEntityToBrandResponse(Brand entity){
+        return mapper.map(entity, BrandResponse.class);
+    }
+
     @Override
     @Transactional
-    public Page<BrandDto> getAllBrands(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public Page<BrandResponse> getAllBrands(int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         Page<Brand> brands = brandRepository.findAll(pageable);
-        return brands.map(this::mapEntityToDto);
+        return brands.map(this::mapEntityToBrandResponse);
     }
 
     @Override
@@ -44,7 +48,6 @@ public class BrandService implements IBrandService {
 
     @Override
     public BrandDto addBrand(BrandDto brandDto) {
-        brandDto.setBrandId(null);
         Brand savedBrand = brandRepository.save(mapper.map(brandDto, Brand.class));
         return mapEntityToDto(savedBrand);
     }
