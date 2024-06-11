@@ -1,6 +1,7 @@
 package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.Category;
+import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.CategoryDto;
 import com.motherlove.models.payload.responseModel.CategoryResponse;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,6 +77,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        if (!category.getProducts().isEmpty()){
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "There is at least one product belongs to this category");
+        }
         categoryRepository.delete(category);
     }
 }
