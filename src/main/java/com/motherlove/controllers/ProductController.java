@@ -20,7 +20,6 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ModelMapper mapper;
 
     @Operation(summary = "Get List Products", description = "Get List Products")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")

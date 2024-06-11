@@ -23,9 +23,6 @@ public class PaymentHistory {
     private Long paymentHistoryId;
 
     @Column(nullable = false)
-    private LocalDateTime paymentDate;
-
-    @Column(nullable = false)
     private float amount;
 
     @Column(nullable = false)
@@ -43,8 +40,8 @@ public class PaymentHistory {
     @JoinColumn(name = "paymentMethodId", nullable = false)
     private PaymentMethod paymentMethod;
 
-    @ManyToOne
-    @JoinColumn(name = "orderId", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "orderId", referencedColumnName = "orderId", nullable = false)
     private Order order;
 
 }

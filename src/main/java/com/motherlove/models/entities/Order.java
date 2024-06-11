@@ -50,8 +50,9 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private Set<OrderDetail> orderDetails;
 
-    @OneToMany(mappedBy = "order")
-    private Set<PaymentHistory> paymentHistories;
+    @OneToOne(mappedBy = "order")
+    private PaymentHistory paymentHistory;
+
 
     @OneToMany(mappedBy = "order")
     private Set<OrderVoucher> orderVouchers;
