@@ -36,7 +36,10 @@ public class Voucher {
     private float discount;
 
     @Column(nullable = false)
-    private LocalDateTime expiryDate;
+    private LocalDateTime startDate;
+
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @Column(nullable = false)
     private float minOrderAmount;

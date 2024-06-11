@@ -12,8 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginDto {
-    @NotBlank(message = "Username or email cannot be blank")
-    @Size(min = 8, message = "Username, email or phone must have at least 8 characters")
+    @NotBlank(message = "Username, email cannot be blank")
+    @Size(min = 8, message = "Username, email must have at least 8 characters")
     private String userNameOrEmailOrPhone;
 
     @NotBlank(message = "Password cannot be blank")
