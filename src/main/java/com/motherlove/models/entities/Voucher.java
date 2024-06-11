@@ -49,9 +49,9 @@ public class Voucher {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "voucher")
     private Set<CustomerVoucher> customerVouchers;
 
-    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "voucher")
     private Set<OrderVoucher> orderVouchers;
 }

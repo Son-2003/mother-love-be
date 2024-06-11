@@ -1,7 +1,7 @@
 package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.ProductDto;
-import com.motherlove.services.IProductService;
+import com.motherlove.services.ProductService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final IProductService productService;
+    private final ProductService productService;
     private final ModelMapper mapper;
 
     @Operation(summary = "Get List Products", description = "Get List Products")
@@ -62,14 +62,10 @@ public class ProductController {
         return ResponseEntity.ok(deletedProductDto);
     }
 
-    @GetMapping("/search-by-brand-category")
-    public ResponseEntity<List<ProductDto>> searchProducstByBrandAndCategory(@RequestParam(name = "brand", required = false) Long brandId,
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductDto>> searchProductsByBrandAndCategory(@RequestParam(name = "brand", required = false) Long brandId,
                                                                              @RequestParam(name = "category", required = false) Long categoryId) {
-        return ResponseEntity.ok(
-                productService.getProductsByBrandAndCategory(brandId, categoryId)
-                        .stream()
-                        .map(x -> mapper.map(x, ProductDto.class))
-                        .toList());
+        return ResponseEntity.ok(productService.getProductsByBrandAndCategory(brandId, categoryId));
     }
 
 }
