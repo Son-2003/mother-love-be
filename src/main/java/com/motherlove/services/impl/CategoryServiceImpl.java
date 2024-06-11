@@ -1,6 +1,7 @@
 package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.Category;
+import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.CategoryDto;
 import com.motherlove.models.payload.responseModel.CategoryResponse;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,22 +48,22 @@ public class CategoryServiceImpl implements CategoryService {
 
         //create Pageable instance
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Category> posts = categoryRepository.findAll(pageable);
+        Page<Category> categories = categoryRepository.findAll(pageable);
 
         //get content of page
-        List<Category> categoryList = posts.getContent();
+        List<Category> categoryList = categories.getContent();
 
         //format the response
         List<CategoryDto> content = categoryList.stream().map(category -> modelMapper.map(category, CategoryDto.class)).collect(Collectors.toList());
-        CategoryResponse postResponse = new CategoryResponse();
-        postResponse.setContent(content);
-        postResponse.setPageNo(posts.getNumber());
-        postResponse.setPageSize(posts.getSize());
-        postResponse.setTotalElements(posts.getTotalElements());
-        postResponse.setTotalPages(posts.getTotalPages());
-        postResponse.setLast(posts.isLast());
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(content);
+        categoryResponse.setPageNo(categories.getNumber());
+        categoryResponse.setPageSize(categories.getSize());
+        categoryResponse.setTotalElements(categories.getTotalElements());
+        categoryResponse.setTotalPages(categories.getTotalPages());
+        categoryResponse.setLast(categories.isLast());
 
-        return postResponse;
+        return categoryResponse;
     }
 
     @Override
@@ -75,6 +77,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        if (!category.getProducts().isEmpty()){
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "There is at least one product belongs to this category");
+        }
         categoryRepository.delete(category);
     }
 }

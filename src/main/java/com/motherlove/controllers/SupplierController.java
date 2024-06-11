@@ -1,8 +1,10 @@
 package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.CategoryDto;
-import com.motherlove.models.payload.responseModel.CategoryResponse;
-import com.motherlove.services.CategoryService;
+import com.motherlove.models.payload.dto.PaymentMethodDto;
+import com.motherlove.models.payload.dto.SupplierDto;
+import com.motherlove.models.payload.responseModel.SupplierResponse;
+import com.motherlove.services.SupplierService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -14,54 +16,54 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/categories")
-public class CategoryController {
-    private final CategoryService categoryService;
+@RequestMapping("/api/v1/suppliers")
+public class SupplierController {
+    private final SupplierService supplierService;
 
     @Autowired
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
+    public SupplierController(SupplierService supplierService) {
+        this.supplierService = supplierService;
     }
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF')")
     @PostMapping
-    public ResponseEntity<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto) {
-        CategoryDto savedCategory = categoryService.addCategory(categoryDto);
+    public ResponseEntity<SupplierDto> addSupplier(@RequestBody @Valid SupplierDto supplierDto) {
+        SupplierDto savedCategory = supplierService.addSupplier(supplierDto);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @GetMapping("{id}")
-    public ResponseEntity<CategoryDto> getCategory(@PathVariable long id){
-        return ResponseEntity.ok(categoryService.getCategory(id));
+    public ResponseEntity<SupplierDto> getSupplier(@PathVariable long id){
+        return ResponseEntity.ok(supplierService.getSupplier(id));
     }
 
     @GetMapping
-    public ResponseEntity<CategoryResponse> getAllCategories(
+    public ResponseEntity<SupplierResponse> getAllSuppliers(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_CATEGORY_ID, required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_SUPPLIER_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ){
-        return ResponseEntity.ok(categoryService.getAllCategories(pageNo, pageSize, sortBy, sortDir));
+        return ResponseEntity.ok(supplierService.getAllSuppliers(pageNo, pageSize, sortBy, sortDir));
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF')")
-    @PutMapping()
-    public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto){
-        return ResponseEntity.ok(categoryService.updateCategory(categoryDto));
+    @PutMapping("{id}")
+    public ResponseEntity<SupplierDto> updateSupplier(@RequestBody @Valid SupplierDto supplierDto, @PathVariable(name = "id") long supplierId){
+        return ResponseEntity.ok(supplierService.updateSupplier(supplierId, supplierDto));
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF')")
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") long id){
-        categoryService.deleteCategory(id);
-        return ResponseEntity.ok("Category deleted successfully!");
+    public ResponseEntity<String> deleteSupplier(@PathVariable long id){
+        supplierService.deleteSupplier(id);
+        return ResponseEntity.ok("Supplier with id: " + id + " has been deleted.");
     }
 }

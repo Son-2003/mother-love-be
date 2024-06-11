@@ -19,4 +19,5 @@ public class AppConstants {
     public static final String DEFAULT_SORT_BY_CATEGORY_ID = "categoryId";
     public static final String DEFAULT_SORT_BY_PAYMENT_METHOD_ID = "paymentMethodId";
     public static final String DEFAULT_SORT_BY_PAYMENT_HISTORY_ID = "paymentHistoryId";
+    public static final String DEFAULT_SORT_BY_SUPPLIER_ID = "supplierId";
 }

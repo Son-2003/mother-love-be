@@ -25,7 +25,7 @@ public class PaymentMethodController {
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     @PostMapping
     public ResponseEntity<PaymentMethodDto> addPaymentMethod(@RequestBody @Valid PaymentMethodDto paymentMethodDto) {
         PaymentMethodDto savedPaymentMehotd = paymentMethodService.addPaymentMethod(paymentMethodDto);
@@ -50,7 +50,7 @@ public class PaymentMethodController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     @PutMapping("{id}")
     public ResponseEntity<PaymentMethodDto> updatePaymentMethod(@RequestBody @Valid PaymentMethodDto paymentMethodDto, @PathVariable(name = "id") long paymentMethodId){
         return ResponseEntity.ok(paymentMethodService.updatePaymentMethod(paymentMethodDto, paymentMethodId));
@@ -58,7 +58,7 @@ public class PaymentMethodController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deletePaymentMethod(@PathVariable(name = "id") long id){
         paymentMethodService.deletePaymentMethod(id);

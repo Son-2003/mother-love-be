@@ -54,15 +54,15 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
         //format the response
         List<PaymentMethodDto> content = paymentMethodList.stream().map(paymentMethod -> modelMapper.map(paymentMethod, PaymentMethodDto.class)).collect(Collectors.toList());
-        PaymentMethodResponse postResponse = new PaymentMethodResponse();
-        postResponse.setContent(content);
-        postResponse.setPageNo(posts.getNumber());
-        postResponse.setPageSize(posts.getSize());
-        postResponse.setTotalElements(posts.getTotalElements());
-        postResponse.setTotalPages(posts.getTotalPages());
-        postResponse.setLast(posts.isLast());
+        PaymentMethodResponse paymentMethodResponse = new PaymentMethodResponse();
+        paymentMethodResponse.setContent(content);
+        paymentMethodResponse.setPageNo(posts.getNumber());
+        paymentMethodResponse.setPageSize(posts.getSize());
+        paymentMethodResponse.setTotalElements(posts.getTotalElements());
+        paymentMethodResponse.setTotalPages(posts.getTotalPages());
+        paymentMethodResponse.setLast(posts.isLast());
 
-        return postResponse;
+        return paymentMethodResponse;
     }
 
     @Override

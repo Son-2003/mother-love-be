@@ -75,15 +75,15 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
 
         //format the response
         List<PaymentHistoryDto> content = paymentHistoryList.stream().map(paymentHistory -> modelMapper.map(paymentHistory, PaymentHistoryDto.class)).collect(Collectors.toList());
-        PaymentHistoryResponse postResponse = new PaymentHistoryResponse();
-        postResponse.setContent(content);
-        postResponse.setPageNo(data.getNumber());
-        postResponse.setPageSize(data.getSize());
-        postResponse.setTotalElements(data.getTotalElements());
-        postResponse.setTotalPages(data.getTotalPages());
-        postResponse.setLast(data.isLast());
+        PaymentHistoryResponse paymentHistoryResponse = new PaymentHistoryResponse();
+        paymentHistoryResponse.setContent(content);
+        paymentHistoryResponse.setPageNo(data.getNumber());
+        paymentHistoryResponse.setPageSize(data.getSize());
+        paymentHistoryResponse.setTotalElements(data.getTotalElements());
+        paymentHistoryResponse.setTotalPages(data.getTotalPages());
+        paymentHistoryResponse.setLast(data.isLast());
 
-        return postResponse;
+        return paymentHistoryResponse;
     }
 
     @Override
