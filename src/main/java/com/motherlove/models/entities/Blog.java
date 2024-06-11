@@ -44,6 +44,6 @@ public class Blog {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "blog")
     private Set<ProductBlog> productBlogs;
 }

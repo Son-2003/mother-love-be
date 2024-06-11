@@ -7,9 +7,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -56,6 +59,12 @@ public class ProductController {
     public ResponseEntity<ProductDto> deleteCategory(@PathVariable(name = "id") long id) {
         ProductDto deletedProductDto = productService.deleteProduct(id);
         return ResponseEntity.ok(deletedProductDto);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductDto>> searchProductsByBrandAndCategory(@RequestParam(name = "brand", required = false) Long brandId,
+                                                                             @RequestParam(name = "category", required = false) Long categoryId) {
+        return ResponseEntity.ok(productService.getProductsByBrandAndCategory(brandId, categoryId));
     }
 
 }

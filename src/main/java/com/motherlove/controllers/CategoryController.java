@@ -52,9 +52,9 @@ public class CategoryController {
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@RequestBody @Valid CategoryDto categoryDto, @PathVariable(name = "id") long categoryId){
-        return ResponseEntity.ok(categoryService.updateCategory(categoryDto, categoryId));
+    @PutMapping()
+    public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto){
+        return ResponseEntity.ok(categoryService.updateCategory(categoryDto));
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")

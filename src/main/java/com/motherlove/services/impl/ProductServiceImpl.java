@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -63,8 +65,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto addProduct(ProductDto productDto) {
-        productDto.setProductId(null);
-        Product savedProduct = productRepository.save(mapper.map(productDto, Product.class));
+        productRepository.save(mapper.map(productDto, Product.class));
+        Product savedProduct = productRepository.findTopByOrderByCreatedDateDesc();
         return mapToDto(savedProduct);
+    }
+
+    @Override
+    public List<ProductDto> getProductsByBrandAndCategory(Long brandId, Long categoryId) {
+        return productRepository.getProductsByBrandIdAndCategoryId(brandId, categoryId)
+                .stream()
+                .map(this::mapToDto).toList();
     }
 }
