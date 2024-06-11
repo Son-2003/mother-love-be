@@ -28,7 +28,7 @@ public class PaymentHistoryController {
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     @PostMapping
     public ResponseEntity<CustomPaymentHistoryResponse> addPaymentHistory(@RequestBody @Valid PaymentHistoryDto paymentHistoryDto) {
         CustomPaymentHistoryResponse paymentHistory = paymentHistoryService.addPaymentHistory(paymentHistoryDto);
@@ -53,7 +53,7 @@ public class PaymentHistoryController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     @PutMapping("{id}")
     public ResponseEntity<CustomPaymentHistoryResponse> updatePaymentHistory(@RequestBody @Valid PaymentHistoryDto paymentHistoryDto, @PathVariable(name = "id") long paymentHistoryId){
         return ResponseEntity.ok(paymentHistoryService.updatePaymentHistory(paymentHistoryDto, paymentHistoryId));
@@ -61,7 +61,7 @@ public class PaymentHistoryController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deletePaymentHistory(@PathVariable(name = "id") long id){
         paymentHistoryService.deletePaymentHistory(id);

@@ -48,22 +48,22 @@ public class CategoryServiceImpl implements CategoryService {
 
         //create Pageable instance
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Category> posts = categoryRepository.findAll(pageable);
+        Page<Category> categories = categoryRepository.findAll(pageable);
 
         //get content of page
-        List<Category> categoryList = posts.getContent();
+        List<Category> categoryList = categories.getContent();
 
         //format the response
         List<CategoryDto> content = categoryList.stream().map(category -> modelMapper.map(category, CategoryDto.class)).collect(Collectors.toList());
-        CategoryResponse postResponse = new CategoryResponse();
-        postResponse.setContent(content);
-        postResponse.setPageNo(posts.getNumber());
-        postResponse.setPageSize(posts.getSize());
-        postResponse.setTotalElements(posts.getTotalElements());
-        postResponse.setTotalPages(posts.getTotalPages());
-        postResponse.setLast(posts.isLast());
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(content);
+        categoryResponse.setPageNo(categories.getNumber());
+        categoryResponse.setPageSize(categories.getSize());
+        categoryResponse.setTotalElements(categories.getTotalElements());
+        categoryResponse.setTotalPages(categories.getTotalPages());
+        categoryResponse.setLast(categories.isLast());
 
-        return postResponse;
+        return categoryResponse;
     }
 
     @Override
