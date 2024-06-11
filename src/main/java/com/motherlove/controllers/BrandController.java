@@ -1,7 +1,7 @@
 package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.BrandDto;
-import com.motherlove.services.IBrandService;
+import com.motherlove.services.BrandService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BrandController {
 
-    private final IBrandService brandService;
+    private final BrandService brandService;
 
     @Operation(summary = "Get List Brands", description = "Get List Brands")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
