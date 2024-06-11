@@ -32,8 +32,9 @@ VALUES
 
 INSERT INTO `role` (`role_name`)
 VALUES
-('MEMBER'),
-('STAFF');
+('ROLE_MEMBER'),
+('ROLE_STAFF'),
+('ROLE_ADMIN');
 
 INSERT INTO `users` (`email`,`gender`, `full_name`, `image`, `password`, `phone`, `point`, `status`, `user_name`, `role_id`)
 VALUES
