@@ -1,5 +1,4 @@
 package com.motherlove.models.payload.dto;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -11,10 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
-    private Long categoryId;
+public class PaymentMethodDto {
+    private Long paymentMethodId;
 
-    @NotEmpty(message = "Category's name cannot be blank")
-    @Size(min = 2, message = "Category's name must have at least 2 characters")
-    private String categoryName;
+    @NotEmpty(message = "Payment method's name cannot be blank")
+    @Size(min = 2, message = "Payment method's name must have at least 2 characters")
+    private String methodName;
 }

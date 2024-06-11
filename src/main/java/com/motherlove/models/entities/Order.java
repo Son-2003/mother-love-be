@@ -50,8 +50,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderDetail> orderDetails;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private Set<PaymentHistory> paymentHistories;
+    @OneToOne(mappedBy = "order")
+    private PaymentHistory paymentHistory;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderVoucher> orderVouchers;
