@@ -6,6 +6,8 @@ import com.motherlove.models.payload.responseModel.JWTAuthResponse;
 import com.motherlove.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +37,14 @@ public class AuthController {
     public ResponseEntity<Object> signup(@Valid@RequestBody SignupDto signupDto){
         JWTAuthResponse response = authService.signupMember(signupDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/refresh_token")
+    public ResponseEntity refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return authService.refreshToken(request, response);
     }
 
     @Operation(

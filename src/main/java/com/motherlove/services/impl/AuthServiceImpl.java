@@ -14,9 +14,13 @@ import com.motherlove.repositories.TokenRepository;
 import com.motherlove.repositories.UserRepository;
 import com.motherlove.security.JwtTokenProvider;
 import com.motherlove.services.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,9 +54,12 @@ public class AuthServiceImpl implements AuthService {
             User user = userRepository.findByUserNameOrEmailOrPhone(loginDto.getUserNameOrEmailOrPhone(), loginDto.getUserNameOrEmailOrPhone(), loginDto.getUserNameOrEmailOrPhone()).orElseThrow(
                     () -> new ResourceNotFoundException("User")
             );
+            String accessToken = jwtTokenProvider.generateAccessToken(user);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+
             revokeAllTokenByUser(user);
-            saveUserToken(jwtTokenProvider.generateToken(authentication), user);
-            return new JWTAuthResponse(jwtTokenProvider.generateToken(authentication), "User login was successful");
+            saveUserToken(accessToken, refreshToken, user);
+            return new JWTAuthResponse(accessToken, refreshToken, "User login was successful");
     }
 
     @Override
@@ -83,17 +90,14 @@ public class AuthServiceImpl implements AuthService {
         Role userRole = roleRepository.findByRoleName("ROLE_MEMBER")
                 .orElseThrow(() -> new MotherLoveApiException(HttpStatus.BAD_REQUEST, "User Role not set."));
         user.setRole(userRole);
-
         user = userRepository.save(user);
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signupDto.getUsername(), signupDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String accessToken = jwtTokenProvider.generateToken(authentication);
+        String accessToken = jwtTokenProvider.generateAccessToken(user);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
 
-        saveUserToken(accessToken, user);
+        saveUserToken(accessToken, refreshToken, user);
 
-        return new JWTAuthResponse(accessToken,"User registration was successful");
+        return new JWTAuthResponse(accessToken, refreshToken,"User registration was successful");
     }
 
     @Override
@@ -105,9 +109,43 @@ public class AuthServiceImpl implements AuthService {
         return mapToCustomerDto(user);
     }
 
-    private void saveUserToken(String accessToken, User user) {
+    @Override
+    public ResponseEntity refreshToken(HttpServletRequest request, HttpServletResponse response) {
+//      extract the token from authorization header
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = authHeader.substring(7);
+
+        // extract username from token
+        String username = jwtTokenProvider.getUsernameFromJwt(token);
+
+        // check if the user exist in database
+        User user = userRepository.findByUserNameOrEmailOrPhone(username, username, username)
+                .orElseThrow(()->new RuntimeException("No user found"));
+
+        // check if the token is valid
+        if(jwtTokenProvider.isValidRefreshToken(token, user.getUserName())) {
+            // generate access token
+            String accessToken = jwtTokenProvider.generateAccessToken(user);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+
+            revokeAllTokenByUser(user);
+            saveUserToken(accessToken, refreshToken, user);
+
+            return new ResponseEntity(new JWTAuthResponse(accessToken, refreshToken, "New token generated"), HttpStatus.OK);
+        }
+
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+    }
+
+    private void saveUserToken(String accessToken, String refreshToken, User user) {
         Token token = new Token();
-        token.setToken(accessToken);
+        token.setAccessToken(accessToken);
+        token.setRefreshToken(refreshToken);
         token.setLoggedOut(false);
         token.setUser(user);
         tokenRepository.save(token);
