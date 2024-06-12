@@ -1,5 +1,6 @@
 package com.motherlove.security;
 
+import com.motherlove.models.entities.User;
 import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.repositories.TokenRepository;
 import io.jsonwebtoken.*;
@@ -8,39 +9,97 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
-    @Value("${app.jwt-secret}")
-    private String jwtSecret;
+    @Value("${application.security.jwt.secret-key}")
+    private String secretKey;
 
-    @Value("${app.jwt-expiration-milliseconds}")
-    private long jwtExpirationDate;
+    @Value("${application.security.jwt.access-token-expiration}")
+    private long accessTokenExpire;
+
+    @Value("${application.security.jwt.refresh-token-expiration}")
+    private long refreshTokenExpire;
 
     private final TokenRepository tokenRepository;
 
-    public String generateToken(Authentication authentication) {
-        UserDetails username = (UserDetails) authentication.getPrincipal();
-        Date currentDate = new Date();
-        Date expirationDate = new Date(currentDate.getTime() + jwtExpirationDate);
+    public String generateAccessToken(User user) {
+        return generateToken(user, accessTokenExpire);
+    }
+
+    public String generateRefreshToken(User user) {
+        return generateToken(user, refreshTokenExpire );
+    }
+
+    public String generateToken(User user, long expireTime) {
         return Jwts.builder()
-                .setSubject(username.getUsername())
-                .setIssuedAt(currentDate)
-                .setExpiration(expirationDate)
+                .setSubject(user.getUserName())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expireTime ))
                 .signWith(key())
                 .compact();
     }
 
+    public boolean isValidRefreshToken(String token, String userName) {
+        String username = getUsernameFromJwt(token);
+
+        boolean validRefreshToken = tokenRepository
+                .findByRefreshToken(token)
+                .map(t -> !t.isLoggedOut())
+                .orElse(false);
+
+        return (username.equals(userName)) && !isTokenExpired(token) && validRefreshToken;
+    }
+
+    public boolean isValid(String token, UserDetails user) {
+        String username = getUsernameFromJwt(token);
+
+        boolean validToken = tokenRepository
+                .findByAccessToken(token)
+                .map(t -> !t.isLoggedOut())
+                .orElse(false);
+
+        return (username.equals(user.getUsername())) && !isTokenExpired(token) && validToken;
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
+        Claims claims = extractAllClaims(token);
+        return resolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getSigninKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private SecretKey getSigninKey() {
+        byte[] keyBytes = Decoders.BASE64URL.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
     private Key key() {
         return Keys.hmacShaKeyFor(
-                Decoders.BASE64.decode(jwtSecret)
+                Decoders.BASE64.decode(secretKey)
         );
     }
 
@@ -75,8 +134,5 @@ public class JwtTokenProvider {
         }
     }
 
-    public boolean isValid(String token){
-        boolean isValidToken =  tokenRepository.findByToken(token).isLoggedOut();
-        return isValidToken;
-    }
+
 }

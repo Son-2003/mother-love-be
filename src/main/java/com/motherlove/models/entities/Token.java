@@ -17,7 +17,10 @@ public class Token {
     private Long tokenId;
 
     @Column(nullable = false)
-    private String token;
+    private String accessToken;
+
+    @Column(nullable = false)
+    private String refreshToken;
 
     @Column(nullable = false)
     private boolean loggedOut;
