@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +38,7 @@ public class ProductController {
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<ProductDto> addCategory(@RequestBody ProductDto brandDto) {
         ProductDto savedProduct = productService.addProduct(brandDto);
@@ -47,14 +46,14 @@ public class ProductController {
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PutMapping("/update")
     public ResponseEntity<ProductDto> updateCategory(@RequestBody ProductDto productDto) {
         return ResponseEntity.ok(productService.updateProduct(productDto));
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ProductDto> deleteCategory(@PathVariable(name = "id") long id) {
         ProductDto deletedProductDto = productService.deleteProduct(id);

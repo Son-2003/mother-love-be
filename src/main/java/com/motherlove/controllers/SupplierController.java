@@ -1,7 +1,5 @@
 package com.motherlove.controllers;
 
-import com.motherlove.models.payload.dto.CategoryDto;
-import com.motherlove.models.payload.dto.PaymentMethodDto;
 import com.motherlove.models.payload.dto.SupplierDto;
 import com.motherlove.models.payload.responseModel.SupplierResponse;
 import com.motherlove.services.SupplierService;
@@ -27,7 +25,7 @@ public class SupplierController {
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<SupplierDto> addSupplier(@RequestBody @Valid SupplierDto supplierDto) {
         SupplierDto savedCategory = supplierService.addSupplier(supplierDto);
@@ -52,7 +50,7 @@ public class SupplierController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PutMapping("{id}")
     public ResponseEntity<SupplierDto> updateSupplier(@RequestBody @Valid SupplierDto supplierDto, @PathVariable(name = "id") long supplierId){
         return ResponseEntity.ok(supplierService.updateSupplier(supplierId, supplierDto));
@@ -60,7 +58,7 @@ public class SupplierController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteSupplier(@PathVariable long id){
         supplierService.deleteSupplier(id);

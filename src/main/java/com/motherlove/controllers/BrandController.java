@@ -31,7 +31,7 @@ public class BrandController {
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<BrandDto> addCategory(@RequestBody BrandDto brandDto) {
         BrandDto savedBrand = brandService.addBrand(brandDto);
@@ -39,14 +39,14 @@ public class BrandController {
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PutMapping("/update")
     public ResponseEntity<BrandDto> updateCategory(@RequestBody BrandDto productDto) {
         return ResponseEntity.ok(brandService.updateBrand(productDto));
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<BrandDto> deleteCategory(@PathVariable(name = "id") long id) {
         BrandDto deletedBrandDto = brandService.deleteBrand(id);
