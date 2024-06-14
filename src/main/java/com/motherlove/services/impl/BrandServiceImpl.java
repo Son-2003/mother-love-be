@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BrandServiceImpl implements com.motherlove.services.BrandService {
@@ -66,5 +68,14 @@ public class BrandServiceImpl implements com.motherlove.services.BrandService {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Brand.class.getName(), "ID", id));
         brandRepository.delete(brand);
         return mapEntityToDto(brand);
+    }
+
+    @Override
+    public List<BrandDto> searchBrands(String keyword) {
+        return brandRepository
+                .searchBrandByBrandNameContaining(keyword)
+                .stream()
+                .map(this::mapEntityToDto)
+                .toList();
     }
 }
