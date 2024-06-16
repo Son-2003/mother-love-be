@@ -40,8 +40,8 @@ public class ProductController {
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<ProductDto> addCategory(@RequestBody ProductDto brandDto) {
-        ProductDto savedProduct = productService.addProduct(brandDto);
+    public ResponseEntity<ProductDto> addCategory(@RequestBody ProductDto productDto) {
+        ProductDto savedProduct = productService.addProduct(productDto);
         return ResponseEntity.ok(savedProduct);
     }
 
