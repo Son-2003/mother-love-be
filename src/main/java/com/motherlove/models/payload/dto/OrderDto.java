@@ -14,4 +14,5 @@ public class OrderDto {
     private LocalDateTime orderDate;
     private int status;
     private float totalAmount;
+    private float afterTotalAmount;
 }

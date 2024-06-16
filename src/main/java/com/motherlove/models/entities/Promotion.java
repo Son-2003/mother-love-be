@@ -16,24 +16,30 @@ import java.util.Set;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "`order`")
-public class Order {
+@Table(name = "promotion")
+public class Promotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+    private Long promotionId;
 
     @Column(nullable = false)
-    private LocalDateTime orderDate;
+    private String promotionName;
+
+    @Column(nullable = false, length = 65535)
+    private String description;
 
     @Column(nullable = false)
-    private int status;
+    private int quantity;
 
     @Column(nullable = false)
-    private float totalAmount;
+    private int availableQuantity;
 
     @Column(nullable = false)
-    private float afterTotalAmount;
+    private LocalDateTime startDate;
+
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -43,26 +49,14 @@ public class Order {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDate;
 
-    @OneToOne(mappedBy = "order")
-    private OrderCancel orderCancel;
+    @ManyToOne
+    @JoinColumn(name = "productId", referencedColumnName = "productId")
+    private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    @JoinColumn(name = "giftId", referencedColumnName = "productId")
+    private Product gift;
 
-    @ManyToOne
-    @JoinColumn(name = "addressId", referencedColumnName = "addressId", nullable = false)
-    private Address address;
-
-    @OneToMany(mappedBy = "order")
-    private Set<OrderDetail> orderDetails;
-
-    @OneToOne(mappedBy = "order")
-    private PaymentHistory paymentHistory;
-
-    @OneToMany(mappedBy = "order")
-    private Set<OrderVoucher> orderVouchers;
-
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "promotion")
     private Set<OrderPromotion> orderPromotions;
 }

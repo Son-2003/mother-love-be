@@ -15,15 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "inventory")
-public class Inventory {
+@Table(name = "order_promotion")
+public class OrderPromotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long inventoryId;
-
-    @Column(nullable = false)
-    private int quantity;
+    private Long orderPromotionId;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -34,6 +31,10 @@ public class Inventory {
     private LocalDateTime lastModifiedDate;
 
     @ManyToOne
-    @JoinColumn(name = "productId", nullable = false)
-    private Product product;
+    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "promotionId", referencedColumnName = "promotionId")
+    private Promotion promotion;
 }
