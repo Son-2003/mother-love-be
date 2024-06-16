@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/brand")
 @RequiredArgsConstructor
@@ -28,6 +30,11 @@ public class BrandController {
     @GetMapping("{id}")
     public ResponseEntity<BrandDto> getCategory(@PathVariable long id) {
         return ResponseEntity.ok(brandService.getBrandById(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BrandDto>> searchBrands(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword) {
+        return ResponseEntity.ok(brandService.searchBrands(keyword));
     }
 
     @SecurityRequirement(name = "Bear Authentication")
