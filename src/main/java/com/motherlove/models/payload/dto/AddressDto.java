@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +14,5 @@ public class AddressDto {
     private String addressLine;
     private String district;
     private String city;
-    private LocalDateTime createdDate;
-    private LocalDateTime lastModifiedDate;
     private UserDto user;
 }

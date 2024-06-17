@@ -8,7 +8,6 @@ import com.motherlove.repositories.AddressRepository;
 import com.motherlove.repositories.UserRepository;
 import com.motherlove.services.AddressService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
     private final AddressRepository addressRepository;
-    private final ModelMapper mapper;
     private final UserRepository userRepository;
 
     @Override
@@ -27,7 +25,7 @@ public class AddressServiceImpl implements AddressService {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-       return addressRepository.findAll(pageable);
+        return addressRepository.findAll(pageable);
     }
 
     @Override
@@ -45,14 +43,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address addAddress(AddressDto addressDto, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(User.class.getName(), "ID", userId));
-
-        addressDto.setAddressId(null);
-        Address address = mapper.map(addressDto, Address.class);
-        address.setUser(user);
-        return addressRepository.save(address);
+    public Address addAddress(AddressDto addressDto) {
+        return mapToDto(addressDto);
     }
 
     @Override
@@ -60,8 +52,7 @@ public class AddressServiceImpl implements AddressService {
         if (!addressRepository.existsById(addressDto.getAddressId())) {
             throw new ResourceNotFoundException(Address.class.getName(), "ID", addressDto.getAddressId());
         }
-        Address address = mapper.map(addressDto, Address.class);
-        return addressRepository.save(address);
+        return addressRepository.save(mapToDto(addressDto));
     }
 
     @Override
@@ -71,5 +62,14 @@ public class AddressServiceImpl implements AddressService {
         return address;
     }
 
-
+    public Address mapToDto(AddressDto addressDto){
+        User user = userRepository.findById(addressDto.getUser().getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException(User.class.getName(), "ID", addressDto.getUser().getUserId()));
+        Address address = new Address();
+        address.setAddressLine(addressDto.getAddressLine());
+        address.setDistrict(addressDto.getDistrict());
+        address.setCity(addressDto.getCity());
+        address.setUser(user);
+        return address;
+    }
 }
