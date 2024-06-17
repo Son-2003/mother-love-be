@@ -76,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
         ));
 
         //Find Address of User
-        Optional<Address> address = Optional.ofNullable(addressRepository.findByUser_UserId(userId).orElseThrow(
+        Optional<Address> address = Optional.ofNullable(addressRepository.findByUser_UserIdAndAddressId(userId, addressId).orElseThrow(
                 () -> new ResourceNotFoundException("Address")
         ));
 
