@@ -18,12 +18,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
-
     private final AddressRepository addressRepository;
     private final ModelMapper mapper;
     private final UserRepository userRepository;
-
-
 
     @Override
     public Page<Address> getAllAddresses(int pageNo, int pageSize, String sortBy, String sortDir) {
@@ -31,6 +28,14 @@ public class AddressServiceImpl implements AddressService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
        return addressRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Address> getAllAddressesByUserId(int pageNo, int pageSize, String sortBy, String sortDir, Long userId) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        return addressRepository.findByUser_UserId(userId, pageable);
     }
 
     @Override

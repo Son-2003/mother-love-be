@@ -37,22 +37,40 @@ public class AddressController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    public ResponseEntity<Object> getAllAddresssByUserId(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "addressId", required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
+            @RequestParam(name = "userId") Long userId
+    ) {
+        var list = addressService.getAllAddressesByUserId(pageNo, pageSize, sortBy, sortDir, userId);
+        List<AddressDto> result = list.stream().map(this::mapEntityToDto).toList();
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> getAddress(@PathVariable long id) {
         return ResponseEntity.ok(mapEntityToDto(addressService.getAddressById(id)));
     }
 
     @PostMapping("/add/{userId}")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> addAddress(@RequestBody AddressDto addressDto, @PathVariable Long userId) {
         return ResponseEntity.ok(mapEntityToDto(addressService.addAddress(addressDto, userId)));
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> updateAddress(@RequestBody AddressDto addressDto) {
         return ResponseEntity.ok(mapEntityToDto(addressService.updateAddress(addressDto)));
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> deleteAddress(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(mapEntityToDto(addressService.deleteAddress(id)));
     }
