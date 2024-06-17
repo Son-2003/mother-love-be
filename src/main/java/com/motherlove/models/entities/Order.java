@@ -60,9 +60,7 @@ public class Order {
     @OneToOne(mappedBy = "order")
     private PaymentHistory paymentHistory;
 
-    @OneToMany(mappedBy = "order")
-    private Set<OrderVoucher> orderVouchers;
-
-    @OneToMany(mappedBy = "order")
-    private Set<OrderPromotion> orderPromotions;
+    @ManyToOne
+    @JoinColumn(name = "voucherId", referencedColumnName = "voucherId", nullable = true)
+    private Voucher voucher;
 }

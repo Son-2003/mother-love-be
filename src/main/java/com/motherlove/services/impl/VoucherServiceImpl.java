@@ -1,9 +1,14 @@
 package com.motherlove.services.impl;
 
+import com.motherlove.models.entities.CustomerVoucher;
+import com.motherlove.models.entities.User;
 import com.motherlove.models.entities.Voucher;
 import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
+import com.motherlove.models.payload.dto.CustomerVoucherDto;
 import com.motherlove.models.payload.dto.VoucherDto;
+import com.motherlove.repositories.CustomerVoucherRepository;
+import com.motherlove.repositories.UserRepository;
 import com.motherlove.repositories.VoucherRepository;
 import com.motherlove.services.VoucherService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +31,8 @@ import java.util.Objects;
 public class VoucherServiceImpl implements VoucherService {
 
     private final VoucherRepository voucherRepository;
+    private final UserRepository userRepository;
+    private final CustomerVoucherRepository customerVoucherRepository;
     private final ModelMapper mapper;
 
     @Override
@@ -34,13 +41,36 @@ public class VoucherServiceImpl implements VoucherService {
 
         //create Pageable instance
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Voucher> vouchers = voucherRepository.findVouchersValidAt(LocalDateTime.now(), pageable);
+
+        return vouchers.map(this::mapToVoucherDto);
+    }
+
+    @Override
+    public Page<CustomerVoucherDto> getAllVouchersOfMember(int pageNo, int pageSize, String sortBy, String sortDir, Long userId) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        //create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<CustomerVoucher> vouchers = customerVoucherRepository.findVouchersOfMember(LocalDateTime.now(), userId, pageable);
+
+        return vouchers.map(this::mapToCustomerDto);
+    }
+
+    @Override
+    public Page<VoucherDto> getAllVouchersInManage(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        //create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Voucher> vouchers = voucherRepository.findAll(pageable);
 
-        return vouchers.map(this::mapToDto);
+        return vouchers.map(this::mapToVoucherDto);
     }
 
     @Override
     public VoucherDto addVoucher(VoucherDto voucherDto) {
+        voucherDto.setStatus(true);
         Voucher voucher = mapper.map(voucherDto, Voucher.class);
         Voucher voucherDuplicate =  voucherRepository.findByVoucherCode(voucher.getVoucherCode());
 
@@ -50,15 +80,16 @@ public class VoucherServiceImpl implements VoucherService {
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This VoucherCode has already!");
         }else {
             Voucher savedVoucher = voucherRepository.save(voucher);
-            return mapToDto(savedVoucher);
+            return mapToVoucherDto(savedVoucher);
         }
     }
 
     @Override
     public VoucherDto getVoucher(Long id) {
         Voucher voucher = voucherRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Voucher", "ID", id));
-        return mapToDto(voucher);
+        return mapToVoucherDto(voucher);
     }
+
 
     @Override
     public VoucherDto updateVoucher(VoucherDto voucherDto) {
@@ -74,20 +105,46 @@ public class VoucherServiceImpl implements VoucherService {
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This VoucherCode has already!");
         }else {
             Voucher voucher = mapper.map(voucherDto, Voucher.class);
-            return mapToDto(voucherRepository.save(voucher));
+            return mapToVoucherDto(voucherRepository.save(voucher));
         }
     }
 
     @Override
     public void deleteVoucher(long id) {
         Voucher voucher = voucherRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Voucher", "ID", id));
-        if (!voucher.getCustomerVouchers().isEmpty() || !voucher.getOrderVouchers().isEmpty()){
-            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "There is at least one product belongs to this category");
+        if (!voucher.getCustomerVouchers().isEmpty() || !voucher.getOrders().isEmpty()){
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "There is at least one order, customer belongs to this voucher");
         }
         voucherRepository.delete(voucher);
     }
 
-    private VoucherDto mapToDto(Voucher voucher) {
+    @Override
+    public CustomerVoucherDto addVoucherForUser(Long userId, Long voucherId) {
+        //Find Voucher
+        Voucher voucher = voucherRepository.findById(voucherId).orElseThrow(() -> new ResourceNotFoundException("Voucher", "ID", voucherId));
+        if(voucher.getEndDate().isBefore(LocalDateTime.now()) || voucher.getQuantity() == 0){
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
+        }
+        //Find User
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
+
+        CustomerVoucher customerVoucher = new CustomerVoucher();
+        customerVoucher.setUsed(false);
+        customerVoucher.setAssignedDate(LocalDateTime.now());
+        customerVoucher.setUsedDate(LocalDateTime.now());
+        customerVoucher.setVoucher(voucher);
+        customerVoucher.setUser(user);
+        voucher.setQuantity(voucher.getQuantity() - 1);
+
+        CustomerVoucher customerVoucherCreated = customerVoucherRepository.save(customerVoucher);
+        return mapToCustomerDto(customerVoucherCreated);
+    }
+
+    private VoucherDto mapToVoucherDto(Voucher voucher) {
         return mapper.map(voucher, VoucherDto.class);
+    }
+
+    private CustomerVoucherDto mapToCustomerDto(CustomerVoucher customerVoucher) {
+        return mapper.map(customerVoucher, CustomerVoucherDto.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.motherlove.controllers;
 
+import com.motherlove.models.payload.dto.CustomerVoucherDto;
 import com.motherlove.models.payload.dto.VoucherDto;
 import com.motherlove.services.VoucherService;
 import com.motherlove.utils.AppConstants;
@@ -29,12 +30,47 @@ public class VoucherController {
         return new ResponseEntity<>(savedVoucher, HttpStatus.CREATED);
     }
 
+    @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
+    @SecurityRequirement(name = "Bear Authentication")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @PostMapping("/member")
+
+    public ResponseEntity<CustomerVoucherDto> addVoucherForMember(@RequestParam Long userId, @RequestParam Long voucherId) {
+        CustomerVoucherDto savedVoucher = voucherService.addVoucherForUser(userId, voucherId);
+        return new ResponseEntity<>(savedVoucher, HttpStatus.CREATED);
+    }
+
+
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @GetMapping("{id}")
     public ResponseEntity<VoucherDto> getVoucher(@PathVariable long id){
         return ResponseEntity.ok(voucherService.getVoucher(id));
     }
 
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @GetMapping("/member")
+    public ResponseEntity<Object> getVouchersOfMember(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_ASSIGNED_DATE, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
+            @RequestParam(name = "userId") Long userId
+    ){
+        return ResponseEntity.ok(voucherService.getAllVouchersOfMember(pageNo, pageSize, sortBy, sortDir, userId));
+    }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @GetMapping("/manage")
+    public ResponseEntity<Object> getAllVouchersInManage(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_VOUCHER_ID, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+    ){
+        return ResponseEntity.ok(voucherService.getAllVouchersInManage(pageNo, pageSize, sortBy, sortDir));
+    }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @GetMapping
     public ResponseEntity<Object> getAllVouchers(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,

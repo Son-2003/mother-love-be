@@ -20,6 +20,7 @@ public class AppConstants {
     public static final String DEFAULT_SORT_BY_PAYMENT_HISTORY_ID = "paymentHistoryId";
     public static final String DEFAULT_SORT_BY_SUPPLIER_ID = "supplierId";
     public static final String DEFAULT_SORT_BY_VOUCHER_ID = "voucherId";
+    public static final String DEFAULT_SORT_BY_ASSIGNED_DATE = "assignedDate";
     public static final String EMAIL_REGEX = "^[^\\.][a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     public static final String PHONE_REGEX = "(84|0[35789])([0-9]{8})\\b";
     public static final String VOUCHER_CODE_REGEX = "^KK[a-zA-Z0-9]{5}$";

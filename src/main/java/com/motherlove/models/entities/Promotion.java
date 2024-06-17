@@ -30,7 +30,7 @@ public class Promotion {
     private String description;
 
     @Column(nullable = false)
-    private int quantity;
+    private int quantityOfGift;
 
     @Column(nullable = false)
     private int availableQuantity;
@@ -58,5 +58,5 @@ public class Promotion {
     private Product gift;
 
     @OneToMany(mappedBy = "promotion")
-    private Set<OrderPromotion> orderPromotions;
+    private Set<OrderDetail> orderDetails;
 }
