@@ -46,4 +46,8 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "orderId", nullable = false)
     private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "promotionId", nullable = true)
+    private Promotion promotion;
 }
