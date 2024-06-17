@@ -65,8 +65,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto addProduct(ProductDto productDto) {
-        productRepository.save(mapper.map(productDto, Product.class));
-        Product savedProduct = productRepository.findTopByOrderByCreatedDateDesc();
+        Product savedProduct = productRepository.save(mapper.map(productDto, Product.class));
         return mapToDto(savedProduct);
     }
 
