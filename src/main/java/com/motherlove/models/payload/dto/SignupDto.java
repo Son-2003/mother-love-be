@@ -22,7 +22,7 @@ public class SignupDto {
     private String email;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, message = "Password must have at least 8 characters")
+    @Pattern(regexp = AppConstants.PASSWORD_REGEX, message = "Password must be 8-12 characters with at least one uppercase letter, one number, and one special character (!@#$%^&*).")
     private String password;
 
     @NotBlank(message = "FullName cannot be blank")
