@@ -6,6 +6,7 @@ import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.OrderDetailDto;
 import com.motherlove.models.payload.dto.OrderDto;
 import com.motherlove.models.payload.dto.ProductDto;
+import com.motherlove.models.payload.dto.VoucherDto;
 import com.motherlove.models.payload.requestModel.CartItem;
 import com.motherlove.models.payload.responseModel.OrderResponse;
 import com.motherlove.models.payload.responseModel.ProductOrderDetailResponse;
@@ -92,7 +93,7 @@ public class OrderServiceImpl implements OrderService {
             Optional<Voucher> voucher = Optional.ofNullable(voucherRepository.findById(voucherId).orElseThrow(
                     () -> new ResourceNotFoundException("Voucher")
             ));
-            if(voucher.get().getStartDate().isBefore(LocalDateTime.now()) || voucher.get().getEndDate().isAfter(LocalDateTime.now()))
+            if(voucher.get().getStartDate().isAfter(LocalDateTime.now()) || voucher.get().getEndDate().isBefore(LocalDateTime.now()))
                 throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
             voucher.ifPresent(order::setVoucher);
         }else{
@@ -190,6 +191,7 @@ public class OrderServiceImpl implements OrderService {
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setListOrderDetail(orderDetailDTOs);
         orderResponse.setOrderDto(mapToOrderDto(order));
+        orderResponse.setVoucherDto(mapper.map(order.getVoucher(), VoucherDto.class));
         return orderResponse;
     }
 }
