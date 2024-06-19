@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,6 +49,7 @@ public class AuthController {
             summary = "Sign Up Account Staff"
     )
     @PostMapping(value = "/register/staff")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> signupStaff(@Valid @RequestBody SignupDto signupDto) throws MessagingException {
         JWTAuthResponse response = authService.signupStaff(signupDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

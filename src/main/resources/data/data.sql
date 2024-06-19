@@ -33,8 +33,8 @@ VALUES
 INSERT INTO `users` (`email`,`gender`, `full_name`, `image`, `password`, `phone`, `point`, `status`, `user_name`, `role_id`)
 VALUES
     ('nguyenducson@gmail.com', 'Male', 'Đức Sơn', 'https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg', '$2a$10$S.Kxv1Y7RNOqIg93UxZNXOCmytrxMSVMmfx5U/RHzDWiHeMG8PHra', '1111111111', 0, 1, 'nguyenducson', 1),
-    ('nguyentiendung@gmail.com', 'Male', 'Tiến Dũng', 'https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg', '$2a$10$X9tC9RYYvVSMOaqkjhTQz..rfQRaP5gh2q.zT9g.bQh4Cujyor/M2', '2222222222', 0, 1, 'nguyentiendung', 2);
-
+    ('nguyentiendung@gmail.com', 'Male', 'Tiến Dũng', 'https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg', '$2a$10$X9tC9RYYvVSMOaqkjhTQz..rfQRaP5gh2q.zT9g.bQh4Cujyor/M2', '2222222222', 0, 1, 'nguyentiendung', 2),
+    ('admin@gmail.com', 'Male', 'Admin', 'https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg', '$2a$10$mFN.hHu9iIE4RW7o4VnMHeFhncRNlCtAQys6wX5setiZkuVxmdfzS', '2222222222', 0, 1, 'admin@admin', 3);
 INSERT INTO `address` (`address_line`,`district`, `city`, `user_id`)
 VALUES
     ('442 Le Quang Dinh P11', 'Binh Thanh', 'Ho Chi Minh City', 1);
