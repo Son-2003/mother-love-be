@@ -44,7 +44,8 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address addAddress(AddressDto addressDto) {
-        return mapToDto(addressDto);
+        Address address = mapToDto(addressDto);
+        return addressRepository.save(address);
     }
 
     @Override
