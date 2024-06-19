@@ -39,6 +39,7 @@ public class AddressController {
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    //TODO: authorize user has address permision
     public ResponseEntity<Object> getAllAddressByUserId(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
@@ -52,24 +53,28 @@ public class AddressController {
     }
 
     @GetMapping("{id}")
+    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> getAddress(@PathVariable long id) {
         return ResponseEntity.ok(mapEntityToDto(addressService.getAddressById(id)));
     }
 
     @PostMapping
+    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> addAddress(@RequestBody AddressDto addressDto) {
         return ResponseEntity.ok(mapEntityToDto(addressService.addAddress(addressDto)));
     }
 
     @PutMapping
+    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> updateAddress(@RequestBody AddressDto addressDto) {
         return ResponseEntity.ok(mapEntityToDto(addressService.updateAddress(addressDto)));
     }
 
     @DeleteMapping("/{id}")
+    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<AddressDto> deleteAddress(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(mapEntityToDto(addressService.deleteAddress(id)));
