@@ -45,6 +45,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address addAddress(AddressDto addressDto) {
         Address address = mapToDto(addressDto);
+        address.setAddressId(null);
         return addressRepository.save(address);
     }
 
@@ -67,6 +68,7 @@ public class AddressServiceImpl implements AddressService {
         User user = userRepository.findById(addressDto.getUser().getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(User.class.getName(), "ID", addressDto.getUser().getUserId()));
         Address address = new Address();
+        address.setAddressId(addressDto.getAddressId());
         address.setAddressLine(addressDto.getAddressLine());
         address.setDistrict(addressDto.getDistrict());
         address.setCity(addressDto.getCity());
