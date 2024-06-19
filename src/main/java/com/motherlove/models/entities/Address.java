@@ -30,6 +30,9 @@ public class Address {
     private String district;
 
     @Column(nullable = false)
+    private boolean isDefault;
+
+    @Column(nullable = false)
     private String city;
 
     @CreatedDate

@@ -14,5 +14,6 @@ public class AddressDto {
     private String addressLine;
     private String district;
     private String city;
+    private boolean isDefault;
     private UserDto user;
 }
