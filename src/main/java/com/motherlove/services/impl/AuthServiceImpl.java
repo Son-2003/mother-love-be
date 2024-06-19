@@ -82,6 +82,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPhone(signupDto.getPhone());
         user.setGender(signupDto.getGender());
         user.setImage("https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg");
+        user.setFirstLogin(false);
         user.setStatus(1);
         user.setPoint(0);
         user.setCreatedDate(LocalDateTime.now());
@@ -98,6 +99,11 @@ public class AuthServiceImpl implements AuthService {
         saveUserToken(accessToken, refreshToken, user);
 
         return new JWTAuthResponse(accessToken, refreshToken,"User registration was successful");
+    }
+
+    @Override
+    public JWTAuthResponse signupStaff(SignupDto signupDto) {
+        return null;
     }
 
     @Override

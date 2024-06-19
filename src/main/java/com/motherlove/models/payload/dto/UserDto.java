@@ -15,6 +15,7 @@ public class UserDto {
     private String email;
     private String phone;
     private int point;
+    private boolean isFirstLogin;
     private String image;
     private String roleName;
 }
