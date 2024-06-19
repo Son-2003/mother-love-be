@@ -14,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
@@ -43,9 +46,30 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public Address setAddressDefault(long userId, long addressOldId, long addressNewId) {
+        Optional<Address> addressOldDefault = Optional.ofNullable(addressRepository.findByUser_UserIdAndAddressId(userId, addressOldId)
+                .orElseThrow(() -> new ResourceNotFoundException(Address.class.getName(), "ID", addressOldId)));
+
+        Optional<Address> addressNewDefault = Optional.ofNullable(addressRepository.findByUser_UserIdAndAddressId(userId, addressNewId)
+                .orElseThrow(() -> new ResourceNotFoundException(Address.class.getName(), "ID", addressNewId)));
+        if(addressOldDefault.isPresent() && addressNewDefault.isPresent()){
+            addressOldDefault.get().setDefault(false);
+            addressNewDefault.get().setDefault(true);
+            addressRepository.save(addressOldDefault.get());
+            addressRepository.save(addressNewDefault.get());
+        }
+        return addressNewDefault.get();
+    }
+
+    @Override
     public Address addAddress(AddressDto addressDto) {
         Address address = mapToDto(addressDto);
         address.setAddressId(null);
+
+        List<Address> addressPage = addressRepository.findByUser_UserId(address.getUser().getUserId());
+        if(addressPage.isEmpty()){
+            address.setDefault(true);
+        }
         return addressRepository.save(address);
     }
 
@@ -73,6 +97,7 @@ public class AddressServiceImpl implements AddressService {
         address.setDistrict(addressDto.getDistrict());
         address.setCity(addressDto.getCity());
         address.setUser(user);
+        address.setDefault(false);
         return address;
     }
 }

@@ -66,6 +66,13 @@ public class AddressController {
         return ResponseEntity.ok(mapEntityToDto(addressService.addAddress(addressDto)));
     }
 
+    @PutMapping("/default")
+    //TODO: authorize user has address permision
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    public ResponseEntity<AddressDto> setDefaultAddress(@RequestParam Long userId, @RequestParam Long addressOldId, @RequestParam Long addressNewId) {
+        return ResponseEntity.ok(mapEntityToDto(addressService.setAddressDefault(userId, addressOldId, addressNewId)));
+    }
+
     @PutMapping
     //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
