@@ -87,13 +87,13 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": {
-						"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcxODY0MjQ2NSwiZXhwIjoxNzE4NzI4ODY1fQ.nuTNxjIKYpCBqe07sAScBLTW_wp8KdNZI1QrBk52tl1-zBgM0GOudFH4oNB5Zhnt"
+						"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW5kdWNzb24iLCJpYXQiOjE3MTg4MDkwMzQsImV4cCI6MTcxODg5NTQzNH0.x5DCZ-vfQ_w2s9Hb8HcnsCy0_5NYWlnBNLupqxFBdBlcw95TP2WD_z6kQmEQFXPo"
 					}
 				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1/address/user?pageNo=0&pageSize=10&sortBy=addressId&sortDir=asc&userId=1",
+					"raw": "http://localhost:8080/api/v1/address/user?pageNo=0&pageSize=10&sortBy=addressId&sortDir=asc&userId=4",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -124,7 +124,7 @@
 						},
 						{
 							"key": "userId",
-							"value": "1"
+							"value": "4"
 						}
 					]
 				},
@@ -152,14 +152,14 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": {
-						"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcxODY0MjQ2NSwiZXhwIjoxNzE4NzI4ODY1fQ.nuTNxjIKYpCBqe07sAScBLTW_wp8KdNZI1QrBk52tl1-zBgM0GOudFH4oNB5Zhnt"
+						"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZHVjc29uQDEyMyIsImlhdCI6MTcxODgxMDIxOCwiZXhwIjoxNzE4ODk2NjE4fQ.tNdIQRSQYhR4o8q0XhHfkswoH5BawyCoS83k2uX0kH1MtF4NTmOKzWUS6udOEEML"
 					}
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"addressLine\": \"string\",\r\n  \"district\": \"string\",\r\n  \"city\": \"string\",\r\n  \"user\": {\r\n    \"userId\": 1\r\n  }\r\n}",
+					"raw": "{\r\n  \"addressLine\": \"S106\",\r\n  \"district\": \"Q9\",\r\n  \"city\": \"HCM\",\r\n  \"user\": {\r\n    \"userId\": 4\r\n  }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -198,7 +198,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"addressId\": 2,\r\n    \"addressLine\": \"S106\",\r\n    \"district\": \"string\",\r\n    \"city\": \"string\",\r\n    \"user\": {\r\n        \"userId\": 1,\r\n        \"fullName\": \"Đức Sơn\",\r\n        \"email\": \"nguyenducson@gmail.com\",\r\n        \"phone\": \"1111111111\",\r\n        \"point\": 0,\r\n        \"image\": \"https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg\",\r\n        \"roleName\": \"ROLE_MEMBER\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"addressId\": 3,\r\n    \"addressLine\": \"S106\",\r\n    \"district\": \"Q9\",\r\n    \"city\": \"HCM\",\r\n    \"user\": {\r\n        \"userId\": 4,\r\n        \"fullName\": \"string\",\r\n        \"email\": \"nguyenducson2@gmail.com\",\r\n        \"phone\": \"0800433475\",\r\n        \"point\": 0,\r\n        \"image\": \"https://res.cloudinary.com/dpysbryyk/image/upload/v1717827115/Milk/UserDefault/dfzhxjcbnixmp8aybnge.jpg\",\r\n        \"roleName\": \"ROLE_MEMBER\",\r\n        \"firstLogin\": false\r\n    },\r\n    \"default\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -206,6 +206,72 @@
 					}
 				},
 				"url": "http://localhost:8080/api/v1/address",
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "Set Default Address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZHVjc29uQDEyMyIsImlhdCI6MTcxODgxMDIxOCwiZXhwIjoxNzE4ODk2NjE4fQ.tNdIQRSQYhR4o8q0XhHfkswoH5BawyCoS83k2uX0kH1MtF4NTmOKzWUS6udOEEML"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/address/default?userId=4&addressOldId=2&addressNewId=3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"address",
+						"default"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "4"
+						},
+						{
+							"key": "addressOldId",
+							"value": "2"
+						},
+						{
+							"key": "addressNewId",
+							"value": "3"
+						}
+					]
+				},
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 			},
 			"response": []
