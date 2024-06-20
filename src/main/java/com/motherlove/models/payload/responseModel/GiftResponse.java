@@ -9,12 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponse {
+public class GiftResponse {
     private Long productId;
     private String productName;
     private String description;
-    private float price;
-    private int quantityProduct;
-    private int status;
+    private int quantityOfGift;
     private String image;
 }
