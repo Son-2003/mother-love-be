@@ -13,9 +13,10 @@ public class ProductDto {
     private String productName;
     private String description;
     private float price;
-    private int quantity;
+    private int quantityProduct;
     private int status;
     private String image;
     private CategoryDto category;
     private BrandDto brand;
+    private PromotionDto promotion;
 }

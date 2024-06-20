@@ -13,11 +13,11 @@ VALUES
     ('Meiji', 'https://res.cloudinary.com/dpysbryyk/image/upload/v1716958839/Milk/Meiji/o7vje2iatspfsetnpeqw.png'),
     ('Morinaga', 'https://res.cloudinary.com/dpysbryyk/image/upload/v1716958848/Milk/morinaga/hna55mr6aubolprapbq9.png');
 
-INSERT INTO `products` (`description`, `image`, `price`, `product_name`, `status`, `brand_id`, `category_id`, `quantity`)
+INSERT INTO `products` (`description`, `image`, `price`, `product_name`, `status`, `brand_id`, `category_id`, `quantity_product`)
 VALUES
-    ('Description 1', '[https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-1/bzrkshtku5u9uuuguzzn.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-1/yerou0jissrypqcfvbiv.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-1/itkarknieq14kndaiadk.jpg]', 100.00, 'Abbott-grow-1', 1, 1, 1, 10),
-    ('Description 2', '[https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-2/zqf0qohiyjxiqa4pn8g6.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-2/mhxsyqcmiygghq9op9ie.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-2/tku9vp4qku3cowvprlhm.jpg]', 100.00, 'Abbott-grow-2', 1, 1, 1, 10),
-    ('Description 3', '[https://res.cloudinary.com/dpysbryyk/image/upload/v1716958852/Milk/ABBOTT-GROW/Abbott-grow-3/trif1lrrqlxkdj1m4rxb.png,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958852/Milk/ABBOTT-GROW/Abbott-grow-3/g9epjdpkixc3xk0hmv1b.png,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958852/Milk/ABBOTT-GROW/Abbott-grow-3/jirrtovhptzwc66jzfev.png]', 100.00, 'Abbott-grow-3', 1, 1, 1, 10);
+    ('Description 1', '[https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-1/bzrkshtku5u9uuuguzzn.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-1/yerou0jissrypqcfvbiv.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-1/itkarknieq14kndaiadk.jpg]', 200000.00, 'Abbott-grow-1', 1, 1, 1, 10),
+    ('Description 2', '[https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-2/zqf0qohiyjxiqa4pn8g6.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-2/mhxsyqcmiygghq9op9ie.jpg,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958851/Milk/ABBOTT-GROW/Abbott-grow-2/tku9vp4qku3cowvprlhm.jpg]', 230000.00, 'Abbott-grow-2', 1, 1, 1, 10),
+    ('Description 3', '[https://res.cloudinary.com/dpysbryyk/image/upload/v1716958852/Milk/ABBOTT-GROW/Abbott-grow-3/trif1lrrqlxkdj1m4rxb.png,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958852/Milk/ABBOTT-GROW/Abbott-grow-3/g9epjdpkixc3xk0hmv1b.png,https://res.cloudinary.com/dpysbryyk/image/upload/v1716958852/Milk/ABBOTT-GROW/Abbott-grow-3/jirrtovhptzwc66jzfev.png]', 220000.00, 'Abbott-grow-3', 1, 1, 1, 10);
 
 INSERT INTO `payment_method` (`method_name`)
 VALUES

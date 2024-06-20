@@ -5,9 +5,9 @@ import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.OrderDetailDto;
 import com.motherlove.models.payload.dto.OrderDto;
-import com.motherlove.models.payload.dto.ProductDto;
 import com.motherlove.models.payload.dto.VoucherDto;
 import com.motherlove.models.payload.requestModel.CartItem;
+import com.motherlove.models.payload.responseModel.GiftResponse;
 import com.motherlove.models.payload.responseModel.OrderResponse;
 import com.motherlove.models.payload.responseModel.ProductOrderDetailResponse;
 import com.motherlove.repositories.*;
@@ -88,17 +88,7 @@ public class OrderServiceImpl implements OrderService {
         address.ifPresent(order::setAddress);
         user.ifPresent(order::setUser);
 
-        //Find Voucher and Save Voucher in OrderVoucher
-        if(voucherId != 0){
-            Optional<Voucher> voucher = Optional.ofNullable(voucherRepository.findById(voucherId).orElseThrow(
-                    () -> new ResourceNotFoundException("Voucher")
-            ));
-            if(voucher.get().getStartDate().isAfter(LocalDateTime.now()) || voucher.get().getEndDate().isBefore(LocalDateTime.now()))
-                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
-            voucher.ifPresent(order::setVoucher);
-        }else{
-            order.setVoucher(null);
-        }
+
 
 
         //Create OrderDetail
@@ -115,9 +105,9 @@ public class OrderServiceImpl implements OrderService {
                 orderDetail.setTotalPrice(product.get().getPrice() * item.getQuantity());
 
                 //Update quantity of Product
-                int quantityUpdated = product.get().getQuantity();
+                int quantityUpdated = product.get().getQuantityProduct();
                 if(quantityUpdated > item.getQuantity()){
-                    product.get().setQuantity(product.get().getQuantity() - item.getQuantity());
+                    product.get().setQuantityProduct(product.get().getQuantityProduct() - item.getQuantity());
                 }else {
                     throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.get().getProductName() + " is not enough!");
                 }
@@ -136,7 +126,23 @@ public class OrderServiceImpl implements OrderService {
             orderDetails.add(orderDetail);
         }
 
-        order.setTotalAmount(totalAmount);
+        //Find Voucher and Save Voucher in OrderVoucher and Discount totalPrice(if have voucher)
+        if(voucherId != 0){
+            Optional<Voucher> voucher = Optional.ofNullable(voucherRepository.findById(voucherId).orElseThrow(
+                    () -> new ResourceNotFoundException("Voucher")
+            ));
+            if(voucher.get().getStartDate().isAfter(LocalDateTime.now()) || voucher.get().getEndDate().isBefore(LocalDateTime.now()))
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
+            voucher.ifPresent(order::setVoucher);
+            order.setTotalAmount(totalAmount);
+            order.setAfterTotalAmount(totalAmount - voucher.get().getDiscount());
+        }else{
+            order.setVoucher(null);
+            order.setTotalAmount(totalAmount);
+            order.setAfterTotalAmount(totalAmount);
+        }
+
+
         Order orderCreated = orderRepository.save(order);
         orderDetailRepository.saveAll(orderDetails);
         return mapOrderToOrderResponse(orderCreated);
@@ -156,13 +162,16 @@ public class OrderServiceImpl implements OrderService {
             productResponse.setProductId(product.get().getProductId());
             productResponse.setProductName(product.get().getProductName());
             productResponse.setDescription(product.get().getDescription());
-            productResponse.setPrice(product.get().getPrice());
-            productResponse.setQuantity(product.get().getQuantity());
-            productResponse.setStatus(product.get().getStatus());
             productResponse.setImage(product.get().getImage());
             if(tmp.getPromotion() != null){
                 Optional<Product> productGift = productRepository.findById(tmp.getPromotion().getGift().getProductId());
-                productResponse.setGiftResponse(mapper.map(productGift, ProductDto.class));
+                GiftResponse giftResponse = new GiftResponse();
+                giftResponse.setProductId(productGift.get().getProductId());
+                giftResponse.setProductName(productGift.get().getProductName());
+                giftResponse.setDescription(productGift.get().getDescription());
+                giftResponse.setImage(productGift.get().getImage());
+                giftResponse.setQuantityOfGift(tmp.getPromotion().getQuantityOfGift());
+                productResponse.setGiftResponse(giftResponse);
             }else {
                 productResponse.setGiftResponse(null);
             }
@@ -191,7 +200,7 @@ public class OrderServiceImpl implements OrderService {
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setListOrderDetail(orderDetailDTOs);
         orderResponse.setOrderDto(mapToOrderDto(order));
-        orderResponse.setVoucherDto(mapper.map(order.getVoucher(), VoucherDto.class));
+        orderResponse.setVoucherDto(order.getVoucher() == null ? null : mapper.map(order.getVoucher(), VoucherDto.class));
         return orderResponse;
     }
 }

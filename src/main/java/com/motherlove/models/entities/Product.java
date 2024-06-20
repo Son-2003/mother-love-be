@@ -34,7 +34,7 @@ public class Product {
     private float price;
 
     @Column(nullable = false)
-    private int quantity = 0;
+    private int quantityProduct = 0;
 
     @Column(nullable = false)
     private int status;
