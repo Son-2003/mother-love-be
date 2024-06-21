@@ -23,7 +23,7 @@ public class PointTransaction {
     private Long transactionId;
 
     @Column(nullable = false)
-    private int points;
+    private Long points;
 
     @Column(nullable = false)
     private LocalDateTime transactionDate;
