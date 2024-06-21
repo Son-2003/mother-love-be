@@ -13,6 +13,7 @@ public class OrderDto {
     private Long orderId;
     private LocalDateTime orderDate;
     private int status;
+    private boolean isFeedBack;
     private float totalAmount;
     private float afterTotalAmount;
 }

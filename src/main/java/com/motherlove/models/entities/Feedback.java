@@ -25,10 +25,10 @@ public class Feedback {
     @Column(nullable = false)
     private int rating;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String comment;
 
-    @Column(nullable = false,length = 65535)
+    @Column(nullable = true,length = 65535)
     private String image;
 
     @Column(nullable = false)
@@ -49,4 +49,8 @@ public class Feedback {
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "orderId", nullable = false)
+    private Order order;
 }

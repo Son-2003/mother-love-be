@@ -85,11 +85,9 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(1);
+        order.setFeedBack(false);
         address.ifPresent(order::setAddress);
         user.ifPresent(order::setUser);
-
-
-
 
         //Create OrderDetail
         for (CartItem item : cartItems){

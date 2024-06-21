@@ -30,6 +30,9 @@ public class Order {
     private int status;
 
     @Column(nullable = false)
+    private boolean isFeedBack;
+
+    @Column(nullable = false)
     private float totalAmount;
 
     @Column(nullable = false)
@@ -59,6 +62,9 @@ public class Order {
 
     @OneToOne(mappedBy = "order")
     private PaymentHistory paymentHistory;
+
+    @OneToMany(mappedBy = "order")
+    private Set<Feedback> feedback;
 
     @ManyToOne
     @JoinColumn(name = "voucherId", referencedColumnName = "voucherId", nullable = true)
