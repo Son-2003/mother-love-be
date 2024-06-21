@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +23,13 @@ public class PointTransactionController {
 
     public PointTransactionDto mapEntityToDto(PointTransaction entity) {
         return mapper.map(entity, PointTransactionDto.class);
+    }
+
+    @PostMapping("/save-point/{userId}/{orderId}")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    public ResponseEntity<PointTransactionDto> savePointForUser(@PathVariable Long userId, @PathVariable Long orderId) {
+        PointTransaction pointTransaction = pointTransactionService.savePointForUser(userId, orderId);
+        return ResponseEntity.ok(mapEntityToDto(pointTransaction));
     }
 
 
