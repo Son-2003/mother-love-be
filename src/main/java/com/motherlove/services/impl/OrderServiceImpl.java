@@ -1,22 +1,21 @@
 package com.motherlove.services.impl;
 
-import com.motherlove.models.entities.Order;
-import com.motherlove.models.entities.OrderDetail;
-import com.motherlove.models.entities.Product;
-import com.motherlove.models.entities.User;
+import com.motherlove.models.entities.*;
+import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.OrderDetailDto;
 import com.motherlove.models.payload.dto.OrderDto;
+import com.motherlove.models.payload.dto.VoucherDto;
 import com.motherlove.models.payload.requestModel.CartItem;
+import com.motherlove.models.payload.responseModel.GiftResponse;
 import com.motherlove.models.payload.responseModel.OrderResponse;
-import com.motherlove.repositories.OrderDetailRepository;
-import com.motherlove.repositories.OrderRepository;
-import com.motherlove.repositories.ProductRepository;
-import com.motherlove.repositories.UserRepository;
+import com.motherlove.models.payload.responseModel.ProductOrderDetailResponse;
+import com.motherlove.repositories.*;
 import com.motherlove.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +33,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final AddressRepository addressRepository;
+    private final VoucherRepository voucherRepository;
+    private final PromotionRepository promotionRepository;
     private final ModelMapper mapper;
 
     @Override
@@ -65,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse createOrder(List<CartItem> cartItems, Long userId) {
+    public OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         float totalAmount = 0;
 
@@ -74,12 +76,18 @@ public class OrderServiceImpl implements OrderService {
                 () -> new ResourceNotFoundException("User")
         ));
 
+        //Find Address of User
+        Optional<Address> address = Optional.ofNullable(addressRepository.findByUser_UserIdAndAddressId(userId, addressId).orElseThrow(
+                () -> new ResourceNotFoundException("Address")
+        ));
+
         //Create Order
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(1);
+        order.setFeedBack(false);
+        address.ifPresent(order::setAddress);
         user.ifPresent(order::setUser);
-
 
         //Create OrderDetail
         for (CartItem item : cartItems){
@@ -93,16 +101,49 @@ public class OrderServiceImpl implements OrderService {
                 orderDetail.setOrder(order);
                 orderDetail.setProduct(product.get());
                 orderDetail.setTotalPrice(product.get().getPrice() * item.getQuantity());
+
+                //Update quantity of Product
+                int quantityUpdated = product.get().getQuantityProduct();
+                if(quantityUpdated > item.getQuantity()){
+                    product.get().setQuantityProduct(product.get().getQuantityProduct() - item.getQuantity());
+                }else {
+                    throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.get().getProductName() + " is not enough!");
+                }
+
+                //Get Promotion of Product and Update available Quantity in Promotion
+                Optional<Promotion> promotion = promotionRepository.findTopByProductIdOrderByCreatedDateDesc(product.get().getProductId());
+                if(promotion.isPresent()){
+                    promotion.get().setAvailableQuantity(promotion.get().getAvailableQuantity() - promotion.get().getQuantityOfGift());
+                    promotionRepository.save(promotion.get());
+                    orderDetail.setPromotion(promotion.get());
+                }else orderDetail.setPromotion(null);
+
+                //Sum TotalPrice in Order
                 totalAmount = totalAmount + (product.get().getPrice() * item.getQuantity());
             }
             orderDetails.add(orderDetail);
         }
-        order.setTotalAmount(totalAmount);
-        orderRepository.save(order);
-        orderDetailRepository.saveAll(orderDetails);
 
-        Order orderSave = orderRepository.findByOrderDate(order.getOrderDate());
-        return mapOrderToOrderResponse(orderSave);
+        //Find Voucher and Save Voucher in OrderVoucher and Discount totalPrice(if have voucher)
+        if(voucherId != 0){
+            Optional<Voucher> voucher = Optional.ofNullable(voucherRepository.findById(voucherId).orElseThrow(
+                    () -> new ResourceNotFoundException("Voucher")
+            ));
+            if(voucher.get().getStartDate().isAfter(LocalDateTime.now()) || voucher.get().getEndDate().isBefore(LocalDateTime.now()))
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
+            voucher.ifPresent(order::setVoucher);
+            order.setTotalAmount(totalAmount);
+            order.setAfterTotalAmount(totalAmount - voucher.get().getDiscount());
+        }else{
+            order.setVoucher(null);
+            order.setTotalAmount(totalAmount);
+            order.setAfterTotalAmount(totalAmount);
+        }
+
+
+        Order orderCreated = orderRepository.save(order);
+        orderDetailRepository.saveAll(orderDetails);
+        return mapOrderToOrderResponse(orderCreated);
     }
 
     private OrderDto mapToOrderDto(Order order){
@@ -111,9 +152,31 @@ public class OrderServiceImpl implements OrderService {
 
     private List<OrderDetailDto> mapToOrderDetailDto(Order order){
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_OrderId(order.getOrderId());
-        return orderDetails.stream().map(
-                orderDetail -> mapper.map(orderDetail, OrderDetailDto.class)
-        ).toList();
+        List<OrderDetailDto> orderDetailDtos = new ArrayList<>();
+        for (OrderDetail tmp: orderDetails){
+            Optional<Product> product = productRepository.findById(tmp.getProduct().getProductId());
+            OrderDetailDto orderDetailDto = mapper.map(tmp, OrderDetailDto.class);
+            ProductOrderDetailResponse productResponse = new ProductOrderDetailResponse();
+            productResponse.setProductId(product.get().getProductId());
+            productResponse.setProductName(product.get().getProductName());
+            productResponse.setDescription(product.get().getDescription());
+            productResponse.setImage(product.get().getImage());
+            if(tmp.getPromotion() != null){
+                Optional<Product> productGift = productRepository.findById(tmp.getPromotion().getGift().getProductId());
+                GiftResponse giftResponse = new GiftResponse();
+                giftResponse.setProductId(productGift.get().getProductId());
+                giftResponse.setProductName(productGift.get().getProductName());
+                giftResponse.setDescription(productGift.get().getDescription());
+                giftResponse.setImage(productGift.get().getImage());
+                giftResponse.setQuantityOfGift(tmp.getPromotion().getQuantityOfGift());
+                productResponse.setGiftResponse(giftResponse);
+            }else {
+                productResponse.setGiftResponse(null);
+            }
+            orderDetailDto.setProduct(productResponse);
+            orderDetailDtos.add(orderDetailDto);
+        }
+        return orderDetailDtos;
     }
 
     public List<OrderResponse> mapListOrderToOrderResponse(List<Order> orders){
@@ -135,6 +198,7 @@ public class OrderServiceImpl implements OrderService {
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setListOrderDetail(orderDetailDTOs);
         orderResponse.setOrderDto(mapToOrderDto(order));
+        orderResponse.setVoucherDto(order.getVoucher() == null ? null : mapper.map(order.getVoucher(), VoucherDto.class));
         return orderResponse;
     }
 }

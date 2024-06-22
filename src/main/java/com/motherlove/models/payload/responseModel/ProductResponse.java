@@ -14,6 +14,7 @@ public class ProductResponse {
     private String productName;
     private String description;
     private float price;
+    private int quantityProduct;
     private int status;
     private String image;
 }

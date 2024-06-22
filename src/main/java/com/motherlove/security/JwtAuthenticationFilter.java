@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             //Check user logout
-            if(!jwtTokenProvider.isValid(jwt)){
+            if(jwtTokenProvider.isValid(jwt, userDetails) || jwtTokenProvider.isValidRefreshToken(jwt, userDetails.getUsername())){
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

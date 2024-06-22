@@ -36,10 +36,16 @@ public class Voucher {
     private float discount;
 
     @Column(nullable = false)
-    private LocalDateTime expiryDate;
+    private LocalDateTime startDate;
+
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @Column(nullable = false)
     private float minOrderAmount;
+
+    @Column(nullable = false)
+    private boolean status;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -53,5 +59,5 @@ public class Voucher {
     private Set<CustomerVoucher> customerVouchers;
 
     @OneToMany(mappedBy = "voucher")
-    private Set<OrderVoucher> orderVouchers;
+    private Set<Order> orders;
 }

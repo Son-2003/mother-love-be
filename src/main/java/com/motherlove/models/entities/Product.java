@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -33,6 +34,9 @@ public class Product {
     private float price;
 
     @Column(nullable = false)
+    private int quantityProduct = 0;
+
+    @Column(nullable = false)
     private int status;
 
     @Column(nullable = false, length = 65535)
@@ -55,9 +59,6 @@ public class Product {
     private Brand brand;
 
     @OneToMany(mappedBy = "product")
-    private Set<Inventory> inventories;
-
-    @OneToMany(mappedBy = "product")
     private Set<StockTransaction> stockTransactions;
 
     @OneToMany(mappedBy = "product")
@@ -68,4 +69,10 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private Set<ProductBlog> productBlogs;
+
+    @OneToMany(mappedBy = "product")
+    private List<Promotion> promotions;
+
+    @OneToMany(mappedBy = "gift")
+    private List<Promotion> gifts;
 }

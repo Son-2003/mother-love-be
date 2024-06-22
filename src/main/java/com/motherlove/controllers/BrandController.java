@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/brand")
 @RequiredArgsConstructor
@@ -30,8 +32,13 @@ public class BrandController {
         return ResponseEntity.ok(brandService.getBrandById(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<BrandDto>> searchBrands(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword) {
+        return ResponseEntity.ok(brandService.searchBrands(keyword));
+    }
+
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<BrandDto> addCategory(@RequestBody BrandDto brandDto) {
         BrandDto savedBrand = brandService.addBrand(brandDto);
@@ -39,14 +46,14 @@ public class BrandController {
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PutMapping("/update")
     public ResponseEntity<BrandDto> updateCategory(@RequestBody BrandDto productDto) {
         return ResponseEntity.ok(brandService.updateBrand(productDto));
     }
 
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<BrandDto> deleteCategory(@PathVariable(name = "id") long id) {
         BrandDto deletedBrandDto = brandService.deleteBrand(id);

@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import java.util.Optional;
+
 @Configuration
 public class CustomLogoutHandler implements LogoutHandler {
     private final TokenRepository tokenRepository;
@@ -27,11 +29,11 @@ public class CustomLogoutHandler implements LogoutHandler {
         }
 
         String token = authHeader.substring(7);
-        Token storedToken = tokenRepository.findByToken(token);
+        Optional<Token> storedToken = tokenRepository.findByAccessToken(token);
 
-        if(storedToken != null) {
-            storedToken.setLoggedOut(true);
-            tokenRepository.save(storedToken);
+        if(storedToken.isPresent()) {
+            storedToken.get().setLoggedOut(true);
+            tokenRepository.save(storedToken.get());
         }
     }
 }

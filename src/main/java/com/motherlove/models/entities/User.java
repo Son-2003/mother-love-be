@@ -35,7 +35,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String phone;
 
     @Column(nullable = false)
@@ -46,6 +46,9 @@ public class User {
 
     @Column(nullable = false)
     private int point;
+
+    @Column(nullable = false)
+    private boolean isFirstLogin;
 
     @Column(nullable = false, length = 65535)
     private String image;

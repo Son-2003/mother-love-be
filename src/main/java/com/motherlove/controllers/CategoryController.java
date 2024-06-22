@@ -7,7 +7,7 @@ import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,18 +15,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/categories")
+@RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @Autowired
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PostMapping
+
     public ResponseEntity<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto) {
         CategoryDto savedCategory = categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
@@ -50,7 +47,7 @@ public class CategoryController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PutMapping()
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto){
         return ResponseEntity.ok(categoryService.updateCategory(categoryDto));
@@ -58,7 +55,7 @@ public class CategoryController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") long id){
         categoryService.deleteCategory(id);

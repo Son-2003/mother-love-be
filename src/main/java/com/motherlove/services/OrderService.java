@@ -9,5 +9,5 @@ import java.util.List;
 public interface OrderService {
     Page<OrderResponse> getAllOrder(int pageNo, int pageSize, String sortBy, String sortDir);
     Page<OrderResponse> getAllOrderByCustomerId(int pageNo, int pageSize, String sortBy, String sortDir, Long userId);
-    OrderResponse createOrder(List<CartItem> cartItems, Long userId);
+    OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId);
 }

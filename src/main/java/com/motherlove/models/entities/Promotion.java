@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,15 +16,30 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "inventory")
-public class Inventory {
+@Table(name = "promotion")
+public class Promotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long inventoryId;
+    private Long promotionId;
 
     @Column(nullable = false)
-    private int quantity;
+    private String promotionName;
+
+    @Column(nullable = false, length = 65535)
+    private String description;
+
+    @Column(nullable = false)
+    private int quantityOfGift;
+
+    @Column(nullable = false)
+    private int availableQuantity;
+
+    @Column(nullable = false)
+    private LocalDateTime startDate;
+
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -34,6 +50,13 @@ public class Inventory {
     private LocalDateTime lastModifiedDate;
 
     @ManyToOne
-    @JoinColumn(name = "productId", nullable = false)
+    @JoinColumn(name = "productId", referencedColumnName = "productId")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "giftId", referencedColumnName = "productId")
+    private Product gift;
+
+    @OneToMany(mappedBy = "promotion")
+    private Set<OrderDetail> orderDetails;
 }

@@ -30,7 +30,13 @@ public class Order {
     private int status;
 
     @Column(nullable = false)
+    private boolean isFeedBack;
+
+    @Column(nullable = false)
     private float totalAmount;
+
+    @Column(nullable = false)
+    private float afterTotalAmount;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -47,13 +53,20 @@ public class Order {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "addressId", referencedColumnName = "addressId", nullable = false)
+    private Address address;
+
     @OneToMany(mappedBy = "order")
     private Set<OrderDetail> orderDetails;
 
     @OneToOne(mappedBy = "order")
     private PaymentHistory paymentHistory;
 
-
     @OneToMany(mappedBy = "order")
-    private Set<OrderVoucher> orderVouchers;
+    private Set<Feedback> feedback;
+
+    @ManyToOne
+    @JoinColumn(name = "voucherId", referencedColumnName = "voucherId", nullable = true)
+    private Voucher voucher;
 }

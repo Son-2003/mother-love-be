@@ -1,9 +1,11 @@
 package com.motherlove.models.payload.dto;
 
+import com.motherlove.models.payload.responseModel.ProductOrderDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Getter
 @Setter
@@ -14,5 +16,5 @@ public class OrderDetailDto {
     private int quantity;
     private float unitPrice;
     private float totalPrice;
-    private ProductDto product;
+    private ProductOrderDetailResponse product;
 }
