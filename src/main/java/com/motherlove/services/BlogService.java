@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 public interface BlogService {
     CustomBlogResponse addBLog(BlogDto blogDto);
     CustomBlogResponse getBlog(Long id);
-    Page<BlogDto> getAllBlogs(int pageNo, int pageSize, String sortBy, String sortDir);
+    Page<CustomBlogResponse> getAllBlogs(int pageNo, int pageSize, String sortBy, String sortDir);
     CustomBlogResponse updateBlog(BlogDto blogDto);
     void deleteBlog(long id);
 }

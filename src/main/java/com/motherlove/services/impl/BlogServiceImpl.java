@@ -16,8 +16,13 @@ import com.motherlove.repositories.UserRepository;
 import com.motherlove.services.BlogService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BlogServiceImpl implements BlogService {
@@ -68,13 +73,47 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Page<BlogDto> getAllBlogs(int pageNo, int pageSize, String sortBy, String sortDir) {
-        return null;
+    public Page<CustomBlogResponse> getAllBlogs(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Blog> blogs = blogRepository.findAll(pageable);
+
+        return blogs.map(blog -> {
+            CustomBlogResponse blogCustomResponse = mapper.map(blog, CustomBlogResponse.class);
+            UserDto userDto = mapper.map(blog.getUser(), UserDto.class);
+            ProductBlog productBlog = productBlogRepository.findByBlogId(blog.getBlogId());
+            ProductDto productDto = mapper.map(productBlog.getProduct(), ProductDto.class);
+            blogCustomResponse.setUser(userDto);
+            blogCustomResponse.setProduct(productDto);
+            return blogCustomResponse;
+        });
     }
 
     @Override
     public CustomBlogResponse updateBlog(BlogDto blogDto) {
-        return null;
+        Blog blog = blogRepository.findById(blogDto.getBlogId()).orElseThrow(() -> new MotherLoveApiException(HttpStatus.NOT_FOUND, "Blog with id " + blogDto.getBlogId() + " not found"));
+        if (!blog.getTitle().equalsIgnoreCase(blogDto.getTitle())) {
+            Blog checkDuplicateTitle = blogRepository.findByTitle(blogDto.getTitle());
+            if (checkDuplicateTitle != null) {
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Blog with title " + blogDto.getTitle() + " already exists");
+            }
+        }
+
+        ProductBlog productBlog = productBlogRepository.findByBlogId(blogDto.getBlogId());
+        Product product = productRepository.findById(blogDto.getProductId()).orElseThrow(() -> new MotherLoveApiException(HttpStatus.NOT_FOUND, "Product with id " + blogDto.getProductId() + " not found"));
+        if (productBlog.getProduct().getProductId() != blogDto.getProductId()) {
+            productBlog.setProduct(product);
+            productBlogRepository.save(productBlog);
+        }
+
+        User user = userRepository.findById(blogDto.getUserId()).orElseThrow(() -> new MotherLoveApiException(HttpStatus.NOT_FOUND, "User with id " + blogDto.getUserId() + " not found"));
+        Blog updatedBlog = blogRepository.save(mapper.map(blogDto, Blog.class));
+
+        CustomBlogResponse blogCustomResponse = mapper.map(updatedBlog, CustomBlogResponse.class);
+        blogCustomResponse.setProduct(mapper.map(product, ProductDto.class));
+        blogCustomResponse.setUser(mapper.map(user, UserDto.class));
+        return blogCustomResponse;
     }
 
     @Override

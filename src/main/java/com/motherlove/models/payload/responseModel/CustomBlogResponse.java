@@ -17,6 +17,7 @@ public class CustomBlogResponse {
     private String content;
     private String image;
     private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
     private UserDto user;
     private ProductDto product;
 }

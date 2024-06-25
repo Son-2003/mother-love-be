@@ -2,6 +2,7 @@ package com.motherlove.models.payload.dto;
 
 import com.motherlove.models.entities.User;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,9 @@ public class BlogDto {
     @NotEmpty(message = "Blog's image cannot be blank")
     private String image;
 
+    @NotNull(message = "Blog's author cannot be null")
     private Long userId;
 
+    @NotNull(message = "Blog's product cannot be null")
     private Long productId;
 }
