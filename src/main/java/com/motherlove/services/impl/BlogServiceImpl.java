@@ -79,6 +79,20 @@ public class BlogServiceImpl implements BlogService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Blog> blogs = blogRepository.findAll(pageable);
 
+        return customResponsePagination(blogs);
+    }
+
+    @Override
+    public Page<CustomBlogResponse> searchBlogs(int pageNo, int pageSize, String sortBy, String sortDir, String searchText) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Blog> blogs = blogRepository.searchBlogs(searchText, pageable);
+
+        return customResponsePagination(blogs);
+    }
+
+    public Page<CustomBlogResponse> customResponsePagination(Page<Blog> blogs){
         return blogs.map(blog -> {
             CustomBlogResponse blogCustomResponse = mapper.map(blog, CustomBlogResponse.class);
             UserDto userDto = mapper.map(blog.getUser(), UserDto.class);

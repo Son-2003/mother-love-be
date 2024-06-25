@@ -60,4 +60,14 @@ public class BlogController {
                                                                 @RequestParam(defaultValue = AppConstants.DEFAULT_SORT_DIRECTION) String sortDir) {
         return ResponseEntity.ok(blogService.getAllBlogs(pageNo, pageSize, sortBy, sortDir));
     }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 OK")
+    @GetMapping("/search")
+    public ResponseEntity<Page<CustomBlogResponse>> searchBlogs(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+                                                                @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int pageSize,
+                                                                @RequestParam(defaultValue = AppConstants.DEFAULT_SORT_BY_BLOG_ID) String sortBy,
+                                                                @RequestParam(defaultValue = AppConstants.DEFAULT_SORT_DIRECTION) String sortDir,
+                                                                @RequestParam String searchText) {
+        return ResponseEntity.ok(blogService.searchBlogs(pageNo, pageSize, sortBy, sortDir, searchText));
+    }
 }
