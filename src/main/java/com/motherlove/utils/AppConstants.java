@@ -21,6 +21,7 @@ public class AppConstants {
     public static final String DEFAULT_SORT_BY_PAYMENT_HISTORY_ID = "paymentHistoryId";
     public static final String DEFAULT_SORT_BY_SUPPLIER_ID = "supplierId";
     public static final String DEFAULT_SORT_BY_VOUCHER_ID = "voucherId";
+    public static final String DEFAULT_SORT_BY_BLOG_ID = "blogId";
     public static final String DEFAULT_SORT_BY_ASSIGNED_DATE = "assignedDate";
     public static final String EMAIL_REGEX = "^[^\\.][a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     public static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,12}$";

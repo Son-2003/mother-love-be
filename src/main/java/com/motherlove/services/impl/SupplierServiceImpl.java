@@ -1,5 +1,6 @@
 package com.motherlove.services.impl;
 
+import com.motherlove.models.entities.Blog;
 import com.motherlove.models.entities.Category;
 import com.motherlove.models.entities.Supplier;
 import com.motherlove.models.exception.MotherLoveApiException;
@@ -72,6 +73,15 @@ public class SupplierServiceImpl implements SupplierService {
 
          return supplierResponse;
      }
+
+    @Override
+    public Page<SupplierDto> searchSuppliers(int pageNo, int pageSize, String sortBy, String sortDir, String searchText) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Supplier> suppliers = supplierRepository.searchSuppliers(searchText, pageable);
+        return suppliers.map(s -> modelMapper.map(s, SupplierDto.class));
+    }
 
     @Override
     public SupplierDto updateSupplier(Long id, SupplierDto supplierDto) {

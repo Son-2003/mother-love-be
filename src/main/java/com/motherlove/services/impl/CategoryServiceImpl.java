@@ -67,6 +67,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Page<CategoryDto> searchCategories(String keyword, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        //create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Category> categories = categoryRepository.searchCategories(keyword, pageable);
+        return categories.map(category -> modelMapper.map(category, CategoryDto.class));
+    }
+
+    @Override
     public CategoryDto updateCategory(CategoryDto categoryDto) {
         Category category = categoryRepository.findById(categoryDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryDto.getCategoryId()));
         category.setCategoryName(categoryDto.getCategoryName());
