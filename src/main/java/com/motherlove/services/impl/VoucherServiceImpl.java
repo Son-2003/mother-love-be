@@ -145,6 +145,7 @@ public class VoucherServiceImpl implements VoucherService {
         }else if(customerVoucherExist != null && customerVoucherExist.getQuantity() < voucher.getQuantityOfUser()){
             //Save
             customerVoucherExist.setQuantity(customerVoucherExist.getQuantity() + 1);
+            voucher.setQuantity(voucher.getQuantity() - 1);
             customerVoucherRepository.save(customerVoucherExist);
             return mapToCustomerDto(customerVoucherExist);
         }else{
