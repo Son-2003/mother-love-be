@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
-    @Query("SELECT p FROM Promotion p WHERE p.product.productId = :productId ORDER BY p.createdDate DESC")
-    Optional<Promotion> findTopByProductIdOrderByCreatedDateDesc(@Param("productId") Long productId);
+    @Query("SELECT p FROM Promotion p WHERE p.product.productId = :productId and p.status = true")
+    Optional<Promotion> findPromotionValid(@Param("productId") Long productId);
 }

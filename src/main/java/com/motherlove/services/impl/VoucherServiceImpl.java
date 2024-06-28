@@ -22,8 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -93,20 +91,19 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public VoucherDto updateVoucher(VoucherDto voucherDto) {
-        voucherRepository.findById(voucherDto.getVoucherId()).orElseThrow(() -> new ResourceNotFoundException("Voucher", "ID", voucherDto.getVoucherId()));
+        Voucher voucherValidated = voucherRepository.findById(voucherDto.getVoucherId())
+                .orElseThrow(() -> new ResourceNotFoundException("Voucher", "ID", voucherDto.getVoucherId()));
 
-        //List voucher not contain voucherCode with id in VoucherDto
-        List<Voucher> vouchers =  voucherRepository.findAll().stream().filter(voucher -> !Objects.equals(voucher.getVoucherId(), voucherDto.getVoucherId())).toList();
+        //Validate voucher
         if(voucherDto.getStartDate().isBefore(LocalDateTime.now())){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher has already started!");
-        }if(!voucherDto.getEndDate().isAfter(voucherDto.getStartDate())){
+        }else if(!voucherDto.getEndDate().isAfter(voucherDto.getStartDate())){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher have StartDate is greater than EndDate!");
-        }else if(vouchers.stream().anyMatch(voucher -> voucher.getVoucherCode().equalsIgnoreCase(voucherDto.getVoucherCode()))){
+        }else if(!voucherValidated.getVoucherCode().equalsIgnoreCase(voucherDto.getVoucherCode()) && voucherRepository.findByVoucherCode(voucherDto.getVoucherCode()) != null){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This VoucherCode has already!");
-        }else {
-            Voucher voucher = mapper.map(voucherDto, Voucher.class);
-            return mapToVoucherDto(voucherRepository.save(voucher));
         }
+        Voucher voucherUpdated = mapper.map(voucherDto, Voucher.class);
+        return mapToVoucherDto(voucherRepository.save(voucherUpdated));
     }
 
     @Override
@@ -125,6 +122,12 @@ public class VoucherServiceImpl implements VoucherService {
         if(voucher.getEndDate().isBefore(LocalDateTime.now()) || voucher.getQuantity() == 0){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
         }
+        //Check User duplicate voucher
+        CustomerVoucher customerVoucherExist = customerVoucherRepository.findByVoucher_VoucherIdAndUser_UserId(voucherId, userId);
+        if(customerVoucherExist != null){
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "User already has this voucher!");
+        }
+
         //Find User
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
 
