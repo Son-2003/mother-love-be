@@ -35,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
     private final VoucherRepository voucherRepository;
+    private final CustomerVoucherRepository customerVoucherRepository;
     private final PromotionRepository promotionRepository;
     private final ModelMapper mapper;
 
@@ -89,57 +90,65 @@ public class OrderServiceImpl implements OrderService {
         address.ifPresent(order::setAddress);
         user.ifPresent(order::setUser);
 
-        //Create OrderDetail
-        for (CartItem item : cartItems){
-            OrderDetail orderDetail = new OrderDetail();
-            Optional<Product> product = Optional.ofNullable(productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product")));
-
-            if(product.isPresent()){
-                orderDetail.setQuantity(item.getQuantity());
-                orderDetail.setUnitPrice(product.get().getPrice());
-                orderDetail.setOrder(order);
-                orderDetail.setProduct(product.get());
-                orderDetail.setTotalPrice(product.get().getPrice() * item.getQuantity());
-
-                //Update quantity of Product
-                int quantityUpdated = product.get().getQuantityProduct();
-                if(quantityUpdated > item.getQuantity()){
-                    product.get().setQuantityProduct(product.get().getQuantityProduct() - item.getQuantity());
-                }else {
-                    throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.get().getProductName() + " is not enough!");
-                }
-
-                //Get Promotion of Product and Update available Quantity in Promotion
-                Optional<Promotion> promotion = promotionRepository.findTopByProductIdOrderByCreatedDateDesc(product.get().getProductId());
-                if(promotion.isPresent()){
-                    promotion.get().setAvailableQuantity(promotion.get().getAvailableQuantity() - promotion.get().getQuantityOfGift());
-                    promotionRepository.save(promotion.get());
-                    orderDetail.setPromotion(promotion.get());
-                }else orderDetail.setPromotion(null);
-
-                //Sum TotalPrice in Order
-                totalAmount = totalAmount + (product.get().getPrice() * item.getQuantity());
-            }
-            orderDetails.add(orderDetail);
-        }
-
-        //Find Voucher and Save Voucher in OrderVoucher and Discount totalPrice(if have voucher)
+        //Find Voucher, Save Voucher in OrderVoucher, Discount totalPrice(if have voucher), Update use voucher in CustomerVoucher
         if(voucherId != 0){
-            Optional<Voucher> voucher = Optional.ofNullable(voucherRepository.findById(voucherId).orElseThrow(
+            Voucher voucher = voucherRepository.findById(voucherId).orElseThrow(
                     () -> new ResourceNotFoundException("Voucher")
-            ));
-            if(voucher.get().getStartDate().isAfter(LocalDateTime.now()) || voucher.get().getEndDate().isBefore(LocalDateTime.now()))
-                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
-            voucher.ifPresent(order::setVoucher);
+            );
+            CustomerVoucher customerVoucher = customerVoucherRepository.findByVoucher_VoucherIdAndUser_UserId(voucherId, userId);
+
+            if(voucher.getStartDate().isAfter(LocalDateTime.now()) || voucher.getEndDate().isBefore(LocalDateTime.now()))
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher of user is not valid!");
+            else if(customerVoucher.isUsed()){
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher is already used");
+            }
+            customerVoucher.setUsed(true);
+            customerVoucher.setUsedDate(LocalDateTime.now());
+            order.setVoucher(voucher);
             order.setTotalAmount(totalAmount);
-            order.setAfterTotalAmount(totalAmount - voucher.get().getDiscount());
+            order.setAfterTotalAmount(totalAmount - voucher.getDiscount());
         }else{
             order.setVoucher(null);
             order.setTotalAmount(totalAmount);
             order.setAfterTotalAmount(totalAmount);
         }
 
+        //Create OrderDetail
+        for (CartItem item : cartItems){
+            OrderDetail orderDetail = new OrderDetail();
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product"));
+
+                orderDetail.setQuantity(item.getQuantity());
+                orderDetail.setUnitPrice(product.getPrice());
+                orderDetail.setOrder(order);
+                orderDetail.setProduct(product);
+                orderDetail.setTotalPrice(product.getPrice() * item.getQuantity());
+
+                //Update quantity of Product
+                int quantityUpdated = product.getQuantityProduct();
+                if(quantityUpdated > item.getQuantity()){
+                    product.setQuantityProduct(product.getQuantityProduct() - item.getQuantity());
+                }else {
+                    throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.getProductName() + " is not enough!");
+                }
+
+                //Get Promotion of Product and update quantity gift in Promotion
+                Optional<Promotion> promotion = promotionRepository.findPromotionValid(product.getProductId());
+                if(promotion.isPresent()){
+                    if(promotion.get().getAvailableQuantity() < promotion.get().getQuantityOfGift()){
+                        throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.getProductName() + "'s gift is not enough!");
+                    }else {
+                        promotion.get().setAvailableQuantity(promotion.get().getAvailableQuantity() - promotion.get().getQuantityOfGift());
+                        orderDetail.setPromotion(promotion.get());
+                    }
+                }else orderDetail.setPromotion(null);
+
+                //Sum TotalPrice in Order
+                totalAmount = totalAmount + (product.getPrice() * item.getQuantity());
+
+            orderDetails.add(orderDetail);
+        }
 
         Order orderCreated = orderRepository.save(order);
         orderDetailRepository.saveAll(orderDetails);
@@ -152,31 +161,34 @@ public class OrderServiceImpl implements OrderService {
 
     private List<OrderDetailDto> mapToOrderDetailDto(Order order){
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_OrderId(order.getOrderId());
-        List<OrderDetailDto> orderDetailDtos = new ArrayList<>();
+        List<OrderDetailDto> orderDetailDTOs = new ArrayList<>();
         for (OrderDetail tmp: orderDetails){
-            Optional<Product> product = productRepository.findById(tmp.getProduct().getProductId());
+            Product product = productRepository.findById(tmp.getProduct().getProductId())
+                    .orElseThrow(null);
             OrderDetailDto orderDetailDto = mapper.map(tmp, OrderDetailDto.class);
             ProductOrderDetailResponse productResponse = new ProductOrderDetailResponse();
-            productResponse.setProductId(product.get().getProductId());
-            productResponse.setProductName(product.get().getProductName());
-            productResponse.setDescription(product.get().getDescription());
-            productResponse.setImage(product.get().getImage());
+            productResponse.setProductId(product.getProductId());
+            productResponse.setProductName(product.getProductName());
+            productResponse.setDescription(product.getDescription());
+            productResponse.setImage(product.getImage());
+
             if(tmp.getPromotion() != null){
-                Optional<Product> productGift = productRepository.findById(tmp.getPromotion().getGift().getProductId());
+                Product productGift = productRepository.findById(tmp.getPromotion().getGift().getProductId())
+                        .orElseThrow(null);
                 GiftResponse giftResponse = new GiftResponse();
-                giftResponse.setProductId(productGift.get().getProductId());
-                giftResponse.setProductName(productGift.get().getProductName());
-                giftResponse.setDescription(productGift.get().getDescription());
-                giftResponse.setImage(productGift.get().getImage());
+                giftResponse.setProductId(productGift.getProductId());
+                giftResponse.setProductName(productGift.getProductName());
+                giftResponse.setDescription(productGift.getDescription());
+                giftResponse.setImage(productGift.getImage());
                 giftResponse.setQuantityOfGift(tmp.getPromotion().getQuantityOfGift());
                 productResponse.setGiftResponse(giftResponse);
             }else {
                 productResponse.setGiftResponse(null);
             }
             orderDetailDto.setProduct(productResponse);
-            orderDetailDtos.add(orderDetailDto);
+            orderDetailDTOs.add(orderDetailDto);
         }
-        return orderDetailDtos;
+        return orderDetailDTOs;
     }
 
     public List<OrderResponse> mapListOrderToOrderResponse(List<Order> orders){

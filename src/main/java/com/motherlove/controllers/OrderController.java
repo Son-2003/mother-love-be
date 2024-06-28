@@ -50,7 +50,7 @@ public class OrderController {
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
     @PostMapping
-    public ResponseEntity<Object> addCategory(@RequestBody List<CartItem> cartItems, @RequestParam Long voucherId, @RequestParam Long userId, @RequestParam Long addressId) {
+    public ResponseEntity<Object> addOrder(@RequestBody List<CartItem> cartItems, @RequestParam Long voucherId, @RequestParam Long userId, @RequestParam Long addressId) {
         OrderResponse orderResponse = orderService.createOrder(cartItems, userId, addressId, voucherId);
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
