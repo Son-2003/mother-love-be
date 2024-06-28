@@ -73,7 +73,9 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = mapper.map(voucherDto, Voucher.class);
         Voucher voucherDuplicate =  voucherRepository.findByVoucherCode(voucher.getVoucherCode());
 
-        if(!voucher.getEndDate().isAfter(voucher.getStartDate())){
+        if(voucherDto.getQuantityOfUser() > voucherDto.getQuantity()){
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity must be greater than QuantityOfUser!");
+        }else if(!voucher.getEndDate().isAfter(voucher.getStartDate())){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher have StartDate is greater than EndDate!");
         }else if(voucherDuplicate != null){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This VoucherCode has already!");
