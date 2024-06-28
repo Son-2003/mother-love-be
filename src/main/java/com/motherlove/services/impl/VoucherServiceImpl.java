@@ -1,6 +1,7 @@
 package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.CustomerVoucher;
+import com.motherlove.models.entities.Order;
 import com.motherlove.models.entities.User;
 import com.motherlove.models.entities.Voucher;
 import com.motherlove.models.exception.MotherLoveApiException;
@@ -124,23 +125,52 @@ public class VoucherServiceImpl implements VoucherService {
         }
         //Check User duplicate voucher
         CustomerVoucher customerVoucherExist = customerVoucherRepository.findByVoucher_VoucherIdAndUser_UserId(voucherId, userId);
-        if(customerVoucherExist != null){
-            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "User already has this voucher!");
+
+        if(customerVoucherExist == null){
+            //Find User
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
+
+            CustomerVoucher customerVoucher = new CustomerVoucher();
+            customerVoucher.setUsed(false);
+            customerVoucher.setAssignedDate(LocalDateTime.now());
+            customerVoucher.setUsedDate(LocalDateTime.now());
+            customerVoucher.setVoucher(voucher);
+            customerVoucher.setQuantity(1);
+            customerVoucher.setUser(user);
+            voucher.setQuantity(voucher.getQuantity() - 1);
+
+            return mapToCustomerDto(customerVoucherRepository.save(customerVoucher));
+        }else if(customerVoucherExist != null && customerVoucherExist.getQuantity() < voucher.getQuantityOfUser()){
+            //Save
+            customerVoucherExist.setQuantity(customerVoucherExist.getQuantity() + 1);
+            customerVoucherRepository.save(customerVoucherExist);
+            return mapToCustomerDto(customerVoucherExist);
+        }else{
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Cannot save this voucher!");
         }
+    }
 
-        //Find User
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
-
-        CustomerVoucher customerVoucher = new CustomerVoucher();
-        customerVoucher.setUsed(false);
-        customerVoucher.setAssignedDate(LocalDateTime.now());
-        customerVoucher.setUsedDate(LocalDateTime.now());
-        customerVoucher.setVoucher(voucher);
-        customerVoucher.setUser(user);
-        voucher.setQuantity(voucher.getQuantity() - 1);
-
-        CustomerVoucher customerVoucherCreated = customerVoucherRepository.save(customerVoucher);
-        return mapToCustomerDto(customerVoucherCreated);
+    @Override
+    public void handleVoucherInOrder(Long voucherId, Long userId, Order order) {
+        //Find Voucher, Save Voucher in OrderVoucher, Discount totalPrice(if have voucher), Update use voucher in CustomerVoucher
+        if(voucherId != 0){
+            Voucher voucher = voucherRepository.findById(voucherId).orElseThrow(
+                    () -> new ResourceNotFoundException("Voucher")
+            );
+            CustomerVoucher customerVoucher = customerVoucherRepository.findByVoucher_VoucherIdAndUser_UserId(voucherId, userId);
+            if(customerVoucher == null) {
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not found!");
+            }else if(voucher.getStartDate().isAfter(LocalDateTime.now()) || voucher.getEndDate().isBefore(LocalDateTime.now()))
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher of user is not valid!");
+            else if(customerVoucher.isUsed()){
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher is already used");
+            }
+            customerVoucher.setUsed(true);
+            customerVoucher.setUsedDate(LocalDateTime.now());
+            order.setVoucher(voucher);
+        }else{
+            order.setVoucher(null);
+        }
     }
 
     private VoucherDto mapToVoucherDto(Voucher voucher) {

@@ -39,6 +39,6 @@ INSERT INTO `address` (`address_line`,`district`, `city`, `user_id`, `is_default
 VALUES
     ('442 Le Quang Dinh P11', 'Binh Thanh', 'Ho Chi Minh City', 1, 1);
 
-INSERT INTO `promotion` (`promotion_name`, `available_quantity`, `description`, `quantity_of_gift`, `start_date`, `end_date`, `product_id`, `gift_id`, `status`)
+INSERT INTO `promotion` (`promotion_name`, `available_quantity`, `description`, `quantity_of_gift`, `start_date`, `end_date`, `product_id`, `gift_id`, `status`, `quantity_of_user`)
 VALUES
-    ('KM mua 1 tang 1', '50', 'Mua 1 tặng 1', 2, '2024-06-17', '2024-06-30', 1, 1, 1);
+    ('KM mua 1 tang 1', '50', 'Mua 1 tặng 1', 2, '2024-06-17', '2024-06-30', 1, 1, 1, 5);

@@ -26,6 +26,9 @@ public class CustomerVoucher {
     private boolean isUsed;
 
     @Column(nullable = false)
+    private int quantity;
+
+    @Column(nullable = false)
     private LocalDateTime assignedDate;
 
     @Column(nullable = false)
