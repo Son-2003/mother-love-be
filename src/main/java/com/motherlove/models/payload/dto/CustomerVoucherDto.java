@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class CustomerVoucherDto {
     private Long customerVoucherId;
     private boolean isUsed;
+    private int quantity;
     private LocalDateTime assignedDate;
     private LocalDateTime usedDate;
     private VoucherDto voucher;

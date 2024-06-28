@@ -33,6 +33,9 @@ public class Voucher {
     private int quantity;
 
     @Column(nullable = false)
+    private int quantityOfUser;
+
+    @Column(nullable = false)
     private float discount;
 
     @Column(nullable = false)
