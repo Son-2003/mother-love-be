@@ -28,7 +28,7 @@ public class VoucherDto {
     private int quantity;
 
     @DecimalMin(value = "1", message = "Quantity must be greater than 0")
-    private int quantityOfUser;
+    private int quantityUse;
 
     @DecimalMin(value = "1000", message = "Discount must be greater than 1.000 VND")
     private float discount;

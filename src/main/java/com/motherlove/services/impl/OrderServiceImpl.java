@@ -86,19 +86,19 @@ public class OrderServiceImpl implements OrderService {
         address.ifPresent(order::setAddress);
         user.ifPresent(order::setUser);
 
-        //Handle Voucher
-        voucherService.handleVoucherInOrder(voucherId, userId, order);
-
         //Create OrderDetail
         List<OrderDetail> orderDetails = orderDetailService.createOrderDetails(cartItems, order);
 
         float totalAmount = orderDetails.stream().map(OrderDetail::getTotalPrice).reduce(0f, Float::sum);
         order.setTotalAmount(totalAmount);
+        //Handle Voucher
+        voucherService.handleVoucherInOrder(voucherId, userId, order);
         order.setAfterTotalAmount(order.getVoucher() != null ? totalAmount - order.getVoucher().getDiscount() : totalAmount);
 
         // Save Order and OrderDetails
         Order orderCreated = orderRepository.save(order);
         orderDetailRepository.saveAll(orderDetails);
+
         return mapOrderToOrderResponse(orderCreated);
     }
 
