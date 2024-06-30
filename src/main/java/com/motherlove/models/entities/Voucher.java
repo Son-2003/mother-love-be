@@ -33,7 +33,7 @@ public class Voucher {
     private int quantity;
 
     @Column(nullable = false)
-    private int quantityOfUser;
+    private int quantityUse;
 
     @Column(nullable = false)
     private float discount;

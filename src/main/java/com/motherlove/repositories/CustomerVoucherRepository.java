@@ -15,5 +15,7 @@ public interface CustomerVoucherRepository extends JpaRepository<CustomerVoucher
             "WHERE :now < v.endDate AND cv.isUsed = false AND u.userId = :userId " +
             "ORDER BY v.voucherId ASC")
     Page<CustomerVoucher> findVouchersOfMember(LocalDateTime now, Long userId, Pageable pageable);
-    CustomerVoucher findByVoucher_VoucherIdAndUser_UserId(Long voucherId, Long userId);
+    @Query("SELECT cv FROM CustomerVoucher cv " +
+            "WHERE cv.voucher.voucherId = :voucherId AND cv.user.userId = :userId ")
+    CustomerVoucher findCustomerVoucherByVoucher_VoucherIdAndUser_UserId(Long voucherId, Long userId);
 }
