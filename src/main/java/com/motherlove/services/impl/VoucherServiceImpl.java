@@ -19,10 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -175,6 +177,13 @@ public class VoucherServiceImpl implements VoucherService {
         }else{
             order.setVoucher(null);
         }
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void handleVoucherExpire() {
+        List<Voucher> vouchersExpire = voucherRepository.findVoucherExpire(LocalDateTime.now());
+        vouchersExpire.forEach(voucher -> voucher.setStatus(2));
+        voucherRepository.saveAll(vouchersExpire);
     }
 
     private VoucherDto mapToVoucherDto(Voucher voucher) {

@@ -48,7 +48,7 @@ public class Voucher {
     private float minOrderAmount;
 
     @Column(nullable = false)
-    private boolean status;
+    private int status;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
