@@ -160,7 +160,7 @@ public class VoucherServiceImpl implements VoucherService {
                 throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher of user is not valid!");
             else if(customerVoucher.isUsed()){
                 throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher is already used");
-            }else if(voucher.getMinOrderAmount() > order.getAfterTotalAmount()){
+            }else if(voucher.getMinOrderAmount() > order.getTotalAmount()){
                 throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
             }else {
                 if(customerVoucher.getQuantityAvailable() == 1){
