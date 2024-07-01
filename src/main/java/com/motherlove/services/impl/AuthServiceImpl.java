@@ -13,8 +13,8 @@ import com.motherlove.repositories.RoleRepository;
 import com.motherlove.repositories.TokenRepository;
 import com.motherlove.repositories.UserRepository;
 import com.motherlove.security.JwtTokenProvider;
-import com.motherlove.services.AuthService;
-import com.motherlove.services.EmailService;
+import com.motherlove.services.IAuthService;
+import com.motherlove.services.IEmailService;
 import com.motherlove.utils.AppConstants;
 import com.motherlove.utils.AutomaticGeneratedPassword;
 import jakarta.mail.MessagingException;
@@ -40,7 +40,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService {
+public class AuthServiceImpl implements IAuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper mapper;
-    private final EmailService emailService;
+    private final IEmailService emailService;
 
     @Override
     public JWTAuthResponse authenticateUser(LoginDto loginDto) {

@@ -1,7 +1,7 @@
 package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.BrandDto;
-import com.motherlove.services.BrandService;
+import com.motherlove.services.IBrandService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BrandController {
 
-    private final BrandService brandService;
+    private final IBrandService brandService;
 
     @Operation(summary = "Get List Brands", description = "Get List Brands")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")

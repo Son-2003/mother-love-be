@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.PaymentMethodDto;
 import com.motherlove.models.payload.responseModel.PaymentMethodResponse;
-import com.motherlove.services.PaymentMethodService;
+import com.motherlove.services.IPaymentMethodService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/payment-methods")
 public class PaymentMethodController {
-    private final PaymentMethodService paymentMethodService;
+    private final IPaymentMethodService paymentMethodService;
 
     @Autowired
-    public PaymentMethodController(PaymentMethodService paymentMethodService) {
+    public PaymentMethodController(IPaymentMethodService paymentMethodService) {
         this.paymentMethodService = paymentMethodService;
     }
 

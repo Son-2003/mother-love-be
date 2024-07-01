@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.CategoryDto;
 import com.motherlove.models.payload.responseModel.CategoryResponse;
-import com.motherlove.services.CategoryService;
+import com.motherlove.services.ICategoryService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-    private final CategoryService categoryService;
+    private final ICategoryService categoryService;
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")

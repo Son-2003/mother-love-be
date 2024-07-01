@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.payload.requestModel.CartItem;
 import com.motherlove.models.payload.responseModel.OrderResponse;
-import com.motherlove.services.OrderService;
+import com.motherlove.services.IOrderService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -18,10 +18,10 @@ import java.util.List;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
 
-    private final OrderService orderService;
+    private final IOrderService orderService;
 
     @Autowired
-    public OrderController(OrderService orderService) {
+    public OrderController(IOrderService orderService) {
         this.orderService = orderService;
     }
 
@@ -39,7 +39,7 @@ public class OrderController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<Object> getAllOrderByUserId(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
@@ -48,6 +48,13 @@ public class OrderController {
             @PathVariable(name = "userId") Long userId
     ){
         return ResponseEntity.ok(orderService.getAllOrderByCustomerId(pageNo, pageSize, sortBy, sortDir, userId));
+    }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<Object> getOrderDetail(@PathVariable(name = "orderId") Long orderId){
+        return ResponseEntity.ok(orderService.getOrderDetail(orderId));
     }
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")

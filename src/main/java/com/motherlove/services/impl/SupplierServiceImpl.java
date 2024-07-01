@@ -1,14 +1,12 @@
 package com.motherlove.services.impl;
 
-import com.motherlove.models.entities.Category;
 import com.motherlove.models.entities.Supplier;
 import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
-import com.motherlove.models.payload.dto.CategoryDto;
 import com.motherlove.models.payload.dto.SupplierDto;
 import com.motherlove.models.payload.responseModel.SupplierResponse;
 import com.motherlove.repositories.SupplierRepository;
-import com.motherlove.services.SupplierService;
+import com.motherlove.services.ISupplierService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SupplierServiceImpl implements SupplierService {
+public class SupplierServiceImpl implements ISupplierService {
      private final SupplierRepository supplierRepository;
      private final ModelMapper modelMapper;
 

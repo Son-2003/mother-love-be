@@ -2,7 +2,7 @@ package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.PointTransaction;
 import com.motherlove.repositories.PointTransactionRepository;
-import com.motherlove.services.PointTransactionService;
+import com.motherlove.services.IPointTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PointTransactionServiceImpl implements PointTransactionService {
+public class PointTransactionServiceImpl implements IPointTransactionService {
 
     private final PointTransactionRepository pointTransactionRepository;
 

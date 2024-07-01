@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.SupplierDto;
 import com.motherlove.models.payload.responseModel.SupplierResponse;
-import com.motherlove.services.SupplierService;
+import com.motherlove.services.ISupplierService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/suppliers")
 public class SupplierController {
-    private final SupplierService supplierService;
+    private final ISupplierService supplierService;
 
     @Autowired
-    public SupplierController(SupplierService supplierService) {
+    public SupplierController(ISupplierService supplierService) {
         this.supplierService = supplierService;
     }
 

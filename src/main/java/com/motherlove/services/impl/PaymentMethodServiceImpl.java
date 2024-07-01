@@ -5,7 +5,7 @@ import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.PaymentMethodDto;
 import com.motherlove.models.payload.responseModel.PaymentMethodResponse;
 import com.motherlove.repositories.PaymentMethodRepository;
-import com.motherlove.services.PaymentMethodService;
+import com.motherlove.services.IPaymentMethodService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PaymentMethodServiceImpl implements PaymentMethodService {
-    private PaymentMethodRepository paymentMethodRepository;
-    private ModelMapper modelMapper;
+public class PaymentMethodServiceImpl implements IPaymentMethodService {
+    private final PaymentMethodRepository paymentMethodRepository;
+    private final ModelMapper modelMapper;
     
     @Autowired
     public PaymentMethodServiceImpl(PaymentMethodRepository paymentMethodRepository, ModelMapper modelMapper) {

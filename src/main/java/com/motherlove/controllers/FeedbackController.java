@@ -4,7 +4,7 @@ import com.motherlove.models.payload.dto.FeedbackDto;
 import com.motherlove.models.payload.requestModel.FeedbackCreateReq;
 import com.motherlove.models.payload.requestModel.FeedbackUpdateReq;
 import com.motherlove.models.payload.responseModel.FeedbackResponse;
-import com.motherlove.services.FeedbackService;
+import com.motherlove.services.IFeedbackService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class FeedbackController {
-    private final FeedbackService feedbackService;
+    private final IFeedbackService feedbackService;
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")

@@ -10,9 +10,9 @@ import com.motherlove.models.payload.responseModel.GiftResponse;
 import com.motherlove.models.payload.responseModel.OrderResponse;
 import com.motherlove.models.payload.responseModel.ProductOrderDetailResponse;
 import com.motherlove.repositories.*;
-import com.motherlove.services.OrderDetailService;
-import com.motherlove.services.OrderService;
-import com.motherlove.services.VoucherService;
+import com.motherlove.services.IOrderDetailService;
+import com.motherlove.services.IOrderService;
+import com.motherlove.services.IVoucherService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
@@ -28,13 +28,13 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements IOrderService {
     private final OrderRepository orderRepository;
-    private final OrderDetailService orderDetailService;
+    private final IOrderDetailService orderDetailService;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
-    private final VoucherService voucherService;
+    private final IVoucherService voucherService;
     private final OrderDetailRepository orderDetailRepository;
     private final ModelMapper mapper;
 
@@ -64,6 +64,14 @@ public class OrderServiceImpl implements OrderService {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
         return new PageImpl<>(orderResponses.subList(start, end), pageable, orderResponses.size());
+    }
+
+    @Override
+    public OrderResponse getOrderDetail(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order"));
+
+        return mapOrderToOrderResponse(order);
     }
 
     @Override

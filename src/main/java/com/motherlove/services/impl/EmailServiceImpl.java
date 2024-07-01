@@ -1,6 +1,6 @@
 package com.motherlove.services.impl;
 
-import com.motherlove.services.EmailService;
+import com.motherlove.services.IEmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService {
+public class EmailServiceImpl implements IEmailService {
     private final JavaMailSender mailSender;
     @Async
     public void sendEmail(String to, String subject, String content) throws MessagingException {

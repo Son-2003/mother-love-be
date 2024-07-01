@@ -11,7 +11,7 @@ import com.motherlove.models.payload.dto.VoucherDto;
 import com.motherlove.repositories.CustomerVoucherRepository;
 import com.motherlove.repositories.UserRepository;
 import com.motherlove.repositories.VoucherRepository;
-import com.motherlove.services.VoucherService;
+import com.motherlove.services.IVoucherService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class VoucherServiceImpl implements VoucherService {
+public class VoucherServiceImpl implements IVoucherService {
 
     private final VoucherRepository voucherRepository;
     private final UserRepository userRepository;
