@@ -6,6 +6,6 @@ import com.motherlove.models.payload.requestModel.CartItem;
 
 import java.util.List;
 
-public interface OrderDetailService {
+public interface IOrderDetailService {
     List<OrderDetail> createOrderDetails(List<CartItem> cartItems, Order order);
 }

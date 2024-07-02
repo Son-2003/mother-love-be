@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.entities.PointTransaction;
 import com.motherlove.models.payload.dto.PointTransactionDto;
-import com.motherlove.services.PointTransactionService;
+import com.motherlove.services.IPointTransactionService;
 import com.motherlove.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PointTransactionController {
 
-    private final PointTransactionService pointTransactionService;
+    private final IPointTransactionService pointTransactionService;
     private final ModelMapper mapper;
 
 

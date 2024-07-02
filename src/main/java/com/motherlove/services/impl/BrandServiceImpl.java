@@ -5,6 +5,7 @@ import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.BrandDto;
 import com.motherlove.models.payload.responseModel.BrandResponse;
 import com.motherlove.repositories.BrandRepository;
+import com.motherlove.services.IBrandService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BrandServiceImpl implements com.motherlove.services.BrandService {
+public class BrandServiceImpl implements IBrandService {
 
     private final BrandRepository brandRepository;
     private final ModelMapper mapper;

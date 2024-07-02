@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 
-public interface AuthService {
+public interface IAuthService {
     JWTAuthResponse authenticateUser(LoginDto loginDto);
     JWTAuthResponse signupMember(SignupDto signupDto);
     JWTAuthResponse signupStaff(SignupDto signupDto) throws MessagingException;

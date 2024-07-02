@@ -1,11 +1,9 @@
 package com.motherlove.controllers;
 
-import com.motherlove.models.payload.dto.CategoryDto;
 import com.motherlove.models.payload.dto.PaymentHistoryDto;
-import com.motherlove.models.payload.responseModel.CategoryResponse;
 import com.motherlove.models.payload.responseModel.CustomPaymentHistoryResponse;
 import com.motherlove.models.payload.responseModel.PaymentHistoryResponse;
-import com.motherlove.services.PaymentHistoryService;
+import com.motherlove.services.IPaymentHistoryService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/payment-histories")
 public class PaymentHistoryController {
-    private PaymentHistoryService paymentHistoryService;
+    private final IPaymentHistoryService paymentHistoryService;
 
     @Autowired
-    public PaymentHistoryController(PaymentHistoryService paymentHistoryService) {
+    public PaymentHistoryController(IPaymentHistoryService paymentHistoryService) {
         this.paymentHistoryService = paymentHistoryService;
     }
 

@@ -6,7 +6,7 @@ import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.AddressDto;
 import com.motherlove.repositories.AddressRepository;
 import com.motherlove.repositories.UserRepository;
-import com.motherlove.services.AddressService;
+import com.motherlove.services.IAddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AddressServiceImpl implements AddressService {
+public class AddressServiceImpl implements IAddressService {
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
 

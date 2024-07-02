@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public interface BrandService {
+public interface IBrandService {
     Page<BrandResponse> getAllBrands(int pageNo, int pageSize, String sortBy, String sortDir);
 
     BrandDto getBrandById(long id);

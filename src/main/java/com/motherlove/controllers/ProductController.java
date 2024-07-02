@@ -1,7 +1,7 @@
 package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.ProductDto;
-import com.motherlove.services.ProductService;
+import com.motherlove.services.IProductService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final IProductService productService;
 
     @Operation(summary = "Get List Products", description = "Get List Products")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")

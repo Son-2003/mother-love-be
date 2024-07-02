@@ -5,7 +5,7 @@ import com.motherlove.models.payload.dto.CustomerVoucherDto;
 import com.motherlove.models.payload.dto.VoucherDto;
 import org.springframework.data.domain.Page;
 
-public interface VoucherService {
+public interface IVoucherService {
     VoucherDto addVoucher(VoucherDto voucherDto);
     VoucherDto getVoucher(Long id);
     Page<VoucherDto> getAllVouchersInManage(int pageNo, int pageSize, String sortBy, String sortDir);

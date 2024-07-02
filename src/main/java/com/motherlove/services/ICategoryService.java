@@ -4,7 +4,7 @@ import com.motherlove.models.payload.dto.CategoryDto;
 import com.motherlove.models.payload.responseModel.CategoryResponse;
 import org.springframework.data.domain.Page;
 
-public interface CategoryService {
+public interface ICategoryService {
     CategoryDto addCategory(CategoryDto categoryDto);
     CategoryDto getCategory(Long id);
     CategoryResponse getAllCategories(int pageNo, int pageSize, String sortBy, String sortDir);

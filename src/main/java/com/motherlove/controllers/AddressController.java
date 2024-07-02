@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.entities.Address;
 import com.motherlove.models.payload.dto.AddressDto;
-import com.motherlove.services.AddressService;
+import com.motherlove.services.IAddressService;
 import com.motherlove.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AddressController {
     
-    private final AddressService addressService;
+    private final IAddressService addressService;
     private final ModelMapper mapper;
 
     private AddressDto mapEntityToDto(Address address) {

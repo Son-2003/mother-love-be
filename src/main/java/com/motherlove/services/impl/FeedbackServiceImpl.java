@@ -14,7 +14,7 @@ import com.motherlove.models.payload.responseModel.FeedbackDetail;
 import com.motherlove.models.payload.responseModel.FeedbackResponse;
 import com.motherlove.models.payload.responseModel.ProductResponse;
 import com.motherlove.repositories.*;
-import com.motherlove.services.FeedbackService;
+import com.motherlove.services.IFeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
@@ -30,7 +30,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class FeedbackServiceImpl implements FeedbackService {
+public class FeedbackServiceImpl implements IFeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
@@ -116,23 +116,19 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public FeedbackDto updateFeedback(FeedbackUpdateReq feedbackUpdateReq) {
-        Optional<Feedback> feedback = Optional.ofNullable(feedbackRepository.findById(feedbackUpdateReq.getFeedbackId())
-                .orElseThrow(() -> new ResourceNotFoundException("Feedback")));
-        if(feedback.isPresent()){
-            feedback.get().setRating(feedbackUpdateReq.getRating());
-            feedback.get().setComment(feedbackUpdateReq.getComment());
-            feedback.get().setImage(feedbackUpdateReq.getImage());
-        }
-        return mapToDto(feedbackRepository.save(feedback.get()));
+        Feedback feedback = feedbackRepository.findById(feedbackUpdateReq.getFeedbackId())
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback"));
+            feedback.setRating(feedbackUpdateReq.getRating());
+            feedback.setComment(feedbackUpdateReq.getComment());
+            feedback.setImage(feedbackUpdateReq.getImage());
+        return mapToDto(feedbackRepository.save(feedback));
     }
 
     @Override
     public void deleteFeedback(Long feedbackId) {
         Optional<Feedback> feedback = Optional.ofNullable(feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback")));
-        if(feedback.isPresent()){
-            feedbackRepository.delete(feedback.get());
-        }
+        feedback.ifPresent(feedbackRepository::delete);
     }
 
     private FeedbackDetail mapToDetail(Feedback feedback){

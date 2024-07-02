@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.CustomerVoucherDto;
 import com.motherlove.models.payload.dto.VoucherDto;
-import com.motherlove.services.VoucherService;
+import com.motherlove.services.IVoucherService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class VoucherController {
 
-    private final VoucherService voucherService;
+    private final IVoucherService voucherService;
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")

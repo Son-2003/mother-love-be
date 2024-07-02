@@ -6,8 +6,9 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public interface OrderService {
+public interface IOrderService {
     Page<OrderResponse> getAllOrder(int pageNo, int pageSize, String sortBy, String sortDir);
     Page<OrderResponse> getAllOrderByCustomerId(int pageNo, int pageSize, String sortBy, String sortDir, Long userId);
+    OrderResponse getOrderDetail(Long orderId);
     OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId);
 }

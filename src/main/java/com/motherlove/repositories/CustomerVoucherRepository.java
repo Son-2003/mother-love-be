@@ -18,4 +18,5 @@ public interface CustomerVoucherRepository extends JpaRepository<CustomerVoucher
     @Query("SELECT cv FROM CustomerVoucher cv " +
             "WHERE cv.voucher.voucherId = :voucherId AND cv.user.userId = :userId ")
     CustomerVoucher findCustomerVoucherByVoucher_VoucherIdAndUser_UserId(Long voucherId, Long userId);
+    CustomerVoucher findCustomerVoucherByVoucher_VoucherId(Long voucherId);
 }

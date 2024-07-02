@@ -9,7 +9,7 @@ import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.requestModel.CartItem;
 import com.motherlove.repositories.ProductRepository;
 import com.motherlove.repositories.PromotionRepository;
-import com.motherlove.services.OrderDetailService;
+import com.motherlove.services.IOrderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class OrderDetailServiceImpl implements OrderDetailService {
+public class OrderDetailServiceImpl implements IOrderDetailService {
 
     private final ProductRepository productRepository;
     private final PromotionRepository promotionRepository;

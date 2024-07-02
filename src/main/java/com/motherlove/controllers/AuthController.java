@@ -4,7 +4,7 @@ import com.motherlove.models.payload.dto.LoginDto;
 import com.motherlove.models.payload.dto.SignupDto;
 import com.motherlove.models.payload.requestModel.PasswordChangeReq;
 import com.motherlove.models.payload.responseModel.JWTAuthResponse;
-import com.motherlove.services.AuthService;
+import com.motherlove.services.IAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.mail.MessagingException;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthService authService;
+    private final IAuthService authService;
 
     @Operation(
             summary = "Login User",
