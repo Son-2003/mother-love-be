@@ -42,5 +42,5 @@ public class VoucherDto {
     @FutureOrPresent(message = "EndDate cannot be in the past")
     private LocalDateTime endDate;
 
-    private boolean status;
+    private int status;
 }

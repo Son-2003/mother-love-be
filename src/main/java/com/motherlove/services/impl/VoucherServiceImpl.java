@@ -71,7 +71,7 @@ public class VoucherServiceImpl implements IVoucherService {
 
     @Override
     public VoucherDto addVoucher(VoucherDto voucherDto) {
-        voucherDto.setStatus(true);
+        voucherDto.setStatus(1);
         Voucher voucher = mapper.map(voucherDto, Voucher.class);
         Voucher voucherDuplicate =  voucherRepository.findByVoucherCode(voucher.getVoucherCode());
 

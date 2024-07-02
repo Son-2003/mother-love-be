@@ -7,12 +7,16 @@ import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -38,6 +42,41 @@ public class OrderController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchOrders(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "orderId", required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
+            @RequestParam(value = "orderDateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime orderDateFrom,
+            @RequestParam(value = "orderDateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime orderDateTo,
+            @RequestParam(value = "status", required = false) Integer status,
+            @RequestParam(value = "isFeedBack", required = false) Boolean isFeedBack,
+            @RequestParam(value = "minAmount", required = false) Float minAmount,
+            @RequestParam(value = "maxAmount", required = false) Float maxAmount,
+            @RequestParam(value = "methodName", required = false) String methodName,
+            @RequestParam(value = "voucherCode", required = false) String voucherCode,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "phone", required = false) String phone
+    ) {
+        Map<String, Object> searchParams = new HashMap<>();
+
+        if (status != null) searchParams.put("status", status);
+        if (isFeedBack != null) searchParams.put("isFeedBack", isFeedBack);
+        if (orderDateFrom != null) searchParams.put("orderDateFrom", orderDateFrom);
+        if (orderDateTo != null) searchParams.put("orderDateTo", orderDateTo);
+        if (minAmount != null) searchParams.put("minAmount", minAmount);
+        if (maxAmount != null) searchParams.put("maxAmount", maxAmount);
+        if (methodName != null && !methodName.isEmpty()) searchParams.put("methodName", methodName);
+        if (voucherCode != null && !voucherCode.isEmpty()) searchParams.put("voucherCode", voucherCode);
+        if (fullName != null && !fullName.isEmpty()) searchParams.put("fullName", fullName);
+        if (phone != null && !phone.isEmpty()) searchParams.put("phone", phone);
+
+        return ResponseEntity.ok(orderService.searchOrder(pageNo, pageSize, sortBy, sortDir, searchParams));
+    }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<Object> getAllOrderByUserId(
@@ -48,6 +87,42 @@ public class OrderController {
             @PathVariable(name = "userId") Long userId
     ){
         return ResponseEntity.ok(orderService.getAllOrderByCustomerId(pageNo, pageSize, sortBy, sortDir, userId));
+    }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/search/user/{userId}")
+    public ResponseEntity<Object> searchOrdersUser(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "orderId", required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
+            @RequestParam(value = "orderDateFrom", required = false)LocalDateTime orderDateFrom,
+            @RequestParam(value = "orderDateTo", required = false) LocalDateTime orderDateTo,
+            @RequestParam(value = "status", required = false) Integer status,
+            @RequestParam(value = "isFeedBack", required = false) Boolean isFeedBack,
+            @RequestParam(value = "minAmount", required = false) Float minAmount,
+            @RequestParam(value = "maxAmount", required = false) Float maxAmount,
+            @RequestParam(value = "methodName", required = false) String methodName,
+            @RequestParam(value = "voucherCode", required = false) String voucherCode,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "phone", required = false) String phone,
+            @PathVariable(name = "userId") Long userId
+    ) {
+        Map<String, Object> searchParams = new HashMap<>();
+
+        if (status != null) searchParams.put("status", status);
+        if (isFeedBack != null) searchParams.put("isFeedBack", isFeedBack);
+        if (orderDateFrom != null) searchParams.put("orderDateFrom", orderDateFrom);
+        if (orderDateTo != null) searchParams.put("orderDateTo", orderDateTo);
+        if (minAmount != null) searchParams.put("minAmount", minAmount);
+        if (maxAmount != null) searchParams.put("maxAmount", maxAmount);
+        if (methodName != null && !methodName.isEmpty()) searchParams.put("methodName", methodName);
+        if (voucherCode != null && !voucherCode.isEmpty()) searchParams.put("voucherCode", voucherCode);
+        if (fullName != null && !fullName.isEmpty()) searchParams.put("fullName", fullName);
+        if (phone != null && !phone.isEmpty()) searchParams.put("phone", phone);
+
+        return ResponseEntity.ok(orderService.searchOrderUser(pageNo, pageSize, sortBy, sortDir, searchParams, userId));
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
@@ -65,4 +140,6 @@ public class OrderController {
         OrderResponse orderResponse = orderService.createOrder(cartItems, userId, addressId, voucherId);
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
+
+
 }
