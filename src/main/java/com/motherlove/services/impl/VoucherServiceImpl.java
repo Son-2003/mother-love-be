@@ -98,15 +98,19 @@ public class VoucherServiceImpl implements IVoucherService {
     public VoucherDto updateVoucher(VoucherDto voucherDto) {
         Voucher voucherValidated = voucherRepository.findById(voucherDto.getVoucherId())
                 .orElseThrow(() -> new ResourceNotFoundException("Voucher", "ID", voucherDto.getVoucherId()));
+        CustomerVoucher customerVoucherExist = customerVoucherRepository.findCustomerVoucherByVoucher_VoucherId(voucherDto.getVoucherId());
 
         //Validate voucher
-        if(voucherDto.getStartDate().isBefore(LocalDateTime.now())){
+        if(voucherValidated.getStartDate().isBefore(LocalDateTime.now())){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher has already started!");
         }else if(!voucherDto.getEndDate().isAfter(voucherDto.getStartDate())){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher have StartDate is greater than EndDate!");
         }else if(!voucherValidated.getVoucherCode().equalsIgnoreCase(voucherDto.getVoucherCode()) && voucherRepository.findByVoucherCode(voucherDto.getVoucherCode()) != null){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This VoucherCode has already!");
+        }else if(customerVoucherExist != null){
+            throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This voucher has been saved by the user!");
         }
+
         Voucher voucherUpdated = mapper.map(voucherDto, Voucher.class);
         return mapToVoucherDto(voucherRepository.save(voucherUpdated));
     }
@@ -127,6 +131,8 @@ public class VoucherServiceImpl implements IVoucherService {
         if(voucher.getEndDate().isBefore(LocalDateTime.now()) || voucher.getQuantity() == 0){
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
         }
+
+
         //Get Voucher had
         CustomerVoucher customerVoucherExist = customerVoucherRepository.findCustomerVoucherByVoucher_VoucherIdAndUser_UserId(voucherId, userId);
 
