@@ -13,15 +13,18 @@ import com.motherlove.repositories.*;
 import com.motherlove.services.IOrderDetailService;
 import com.motherlove.services.IOrderService;
 import com.motherlove.services.IVoucherService;
+import com.motherlove.utils.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -43,9 +46,9 @@ public class OrderServiceImpl implements IOrderService {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        List<Order> orders = orderRepository.findAll();
+        List<Order> ordersPage = orderRepository.findAll();
 
-        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(orders);
+        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(ordersPage);
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
@@ -110,6 +113,90 @@ public class OrderServiceImpl implements IOrderService {
         return mapOrderToOrderResponse(orderCreated);
     }
 
+    @Override
+    public Page<OrderResponse> searchOrder(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Specification<Order> specification = specification(searchParams);
+
+        // Query database with Specification and userId
+        List<Order> ordersPage = orderRepository.findAll(specification);
+
+        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(ordersPage);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
+        return new PageImpl<>(orderResponses.subList(start, end), pageable, orderResponses.size());
+    }
+
+    @Override
+    public Page<OrderResponse> searchOrderUser(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams, Long userId) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Specification<Order> specification = specification(searchParams);
+
+        // Query database with Specification and userId
+        List<Order> ordersPage = orderRepository.findAll(specification.and((root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user").get("userId"), userId)));
+
+        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(ordersPage);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
+        return new PageImpl<>(orderResponses.subList(start, end), pageable, orderResponses.size());
+    }
+
+    private Specification<Order> specification(Map<String, Object> searchParams){
+        List<Specification<Order>> specs = new ArrayList<>();
+
+        // Lặp qua từng entry trong searchParams để tạo các Specification tương ứng
+        searchParams.forEach((key, value) -> {
+            switch (key) {
+                case "status":
+                case "isFeedBack":
+                    specs.add(GenericSpecification.fieldEquals(key, value));
+                    break;
+                case "orderDateFrom":
+                    // Nếu có cả orderDateFrom và orderDateTo, sử dụng fieldBetween để tạo Specification
+                    if (searchParams.containsKey("orderDateTo")) {
+                        specs.add(GenericSpecification.fieldBetween("orderDate", (LocalDateTime) searchParams.get("orderDateFrom"), (LocalDateTime) searchParams.get("orderDateTo")));
+                    } else {
+                        // Ngược lại, sử dụng fieldGreaterThan để tạo Specification
+                        specs.add(GenericSpecification.fieldGreaterThan("orderDate", (LocalDateTime) value));
+                    }
+                    break;
+                case "orderDateTo":
+                    if (!searchParams.containsKey("orderDateFrom")) {
+                        specs.add(GenericSpecification.fieldLessThan("orderDate", (LocalDateTime) value));
+                    }
+                    break;
+                case "minAmount":
+                    if (searchParams.containsKey("maxAmount")) {
+                        specs.add(GenericSpecification.fieldBetween("afterTotalAmount", (Float) searchParams.get("minAmount"), (Float) searchParams.get("maxAmount")));
+                    } else {
+                        specs.add(GenericSpecification.fieldGreaterThan("afterTotalAmount", (Float) value));
+                    }
+                    break;
+                case "maxAmount":
+                    if (!searchParams.containsKey("minAmount")) {
+                        specs.add(GenericSpecification.fieldLessThan("afterTotalAmount", (Float) value));
+                    }
+                    break;
+                case "methodName":
+                case "voucherCode":
+                case "fullName":
+                case "phone":
+                    specs.add(GenericSpecification.fieldContains(key, (String) value));
+                    break;
+            }
+        });
+
+        // Tổng hợp tất cả các Specification thành một Specification duy nhất bằng cách sử dụng phương thức reduce của Stream
+        //reduce de ket hop cac spec1(dk1), spec2(dk2),.. thanh 1 specification chung va cac spec ket hop voi nhau thono qua AND
+        return specs.stream().reduce(Specification.where(null), Specification::and);
+    }
     private OrderDto mapToOrderDto(Order order){
         return mapper.map(order, OrderDto.class);
     }
