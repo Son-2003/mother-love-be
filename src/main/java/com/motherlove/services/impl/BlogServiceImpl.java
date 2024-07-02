@@ -13,7 +13,8 @@ import com.motherlove.repositories.BlogRepository;
 import com.motherlove.repositories.ProductBlogRepository;
 import com.motherlove.repositories.ProductRepository;
 import com.motherlove.repositories.UserRepository;
-import com.motherlove.services.BlogService;
+import com.motherlove.services.IBlogService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,24 +22,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BlogServiceImpl implements BlogService {
-    private BlogRepository blogRepository;
-    private ProductBlogRepository productBlogRepository;
-    private UserRepository userRepository;
-    private ProductRepository productRepository;
-    private ModelMapper mapper;
-
-    public BlogServiceImpl(BlogRepository blogRepository, ProductBlogRepository productBlogRepository, UserRepository userRepository, ProductRepository productRepository, ModelMapper mapper) {
-        this.blogRepository = blogRepository;
-        this.productBlogRepository = productBlogRepository;
-        this.userRepository = userRepository;
-        this.productRepository = productRepository;
-        this.mapper = mapper;
-    }
+@Transactional
+@RequiredArgsConstructor
+public class BlogServiceImpl implements IBlogService {
+    private final BlogRepository blogRepository;
+    private final ProductBlogRepository productBlogRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final ModelMapper mapper;
 
     @Override
     public CustomBlogResponse addBLog(BlogDto blogDto) {

@@ -6,27 +6,24 @@ import com.motherlove.models.payload.dto.PaymentMethodDto;
 import com.motherlove.models.payload.responseModel.PaymentMethodResponse;
 import com.motherlove.repositories.PaymentMethodRepository;
 import com.motherlove.services.IPaymentMethodService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class PaymentMethodServiceImpl implements IPaymentMethodService {
     private final PaymentMethodRepository paymentMethodRepository;
     private final ModelMapper modelMapper;
-    
-    @Autowired
-    public PaymentMethodServiceImpl(PaymentMethodRepository paymentMethodRepository, ModelMapper modelMapper) {
-        this.paymentMethodRepository = paymentMethodRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public PaymentMethodDto addPaymentMethod(PaymentMethodDto paymentMethodDto) {

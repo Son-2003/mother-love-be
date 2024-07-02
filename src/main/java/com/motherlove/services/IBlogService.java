@@ -4,7 +4,7 @@ import com.motherlove.models.payload.dto.BlogDto;
 import com.motherlove.models.payload.responseModel.CustomBlogResponse;
 import org.springframework.data.domain.Page;
 
-public interface BlogService {
+public interface IBlogService {
     CustomBlogResponse addBLog(BlogDto blogDto);
     CustomBlogResponse getBlog(Long id);
     Page<CustomBlogResponse> getAllBlogs(int pageNo, int pageSize, String sortBy, String sortDir);

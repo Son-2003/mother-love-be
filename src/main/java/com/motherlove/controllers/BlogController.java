@@ -2,7 +2,7 @@ package com.motherlove.controllers;
 
 import com.motherlove.models.payload.dto.BlogDto;
 import com.motherlove.models.payload.responseModel.CustomBlogResponse;
-import com.motherlove.services.BlogService;
+import com.motherlove.services.IBlogService;
 import com.motherlove.utils.AppConstants;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -13,13 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/blogs")
 @RequiredArgsConstructor
 public class BlogController {
-    private final BlogService blogService;
+    private final IBlogService blogService;
 
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")

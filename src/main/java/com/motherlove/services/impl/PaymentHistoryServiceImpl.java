@@ -14,32 +14,27 @@ import com.motherlove.repositories.OrderRepository;
 import com.motherlove.repositories.PaymentHistoryRepository;
 import com.motherlove.repositories.PaymentMethodRepository;
 import com.motherlove.services.IPaymentHistoryService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final PaymentMethodRepository paymentMethodRepository;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
-
-    @Autowired
-    public PaymentHistoryServiceImpl(PaymentHistoryRepository paymentHistoryRepository, PaymentMethodRepository paymentMethodRepository, OrderRepository orderRepository, ModelMapper modelMapper) {
-        this.paymentHistoryRepository = paymentHistoryRepository;
-        this.paymentMethodRepository = paymentMethodRepository;
-        this.orderRepository = orderRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public CustomPaymentHistoryResponse addPaymentHistory(PaymentHistoryDto paymentHistoryDto) {

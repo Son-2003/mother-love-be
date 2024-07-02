@@ -6,20 +6,21 @@ import com.motherlove.models.entities.User;
 import com.motherlove.repositories.OrderRepository;
 import com.motherlove.repositories.PointTransactionRepository;
 import com.motherlove.repositories.UserRepository;
-import com.motherlove.services.PointTransactionService;
+import com.motherlove.services.IPointTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
-public class PointTransactionServiceImpl implements PointTransactionService {
-
+public class PointTransactionServiceImpl implements IPointTransactionService {
     private final PointTransactionRepository pointTransactionRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;

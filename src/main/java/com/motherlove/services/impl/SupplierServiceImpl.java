@@ -1,37 +1,31 @@
 package com.motherlove.services.impl;
 
-import com.motherlove.models.entities.Blog;
-import com.motherlove.models.entities.Category;
 import com.motherlove.models.entities.Supplier;
 import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
-import com.motherlove.models.payload.dto.CategoryDto;
 import com.motherlove.models.payload.dto.SupplierDto;
 import com.motherlove.models.payload.responseModel.SupplierResponse;
 import com.motherlove.repositories.SupplierRepository;
-import com.motherlove.services.SupplierService;
+import com.motherlove.services.ISupplierService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SupplierServiceImpl implements SupplierService {
+@Transactional
+@RequiredArgsConstructor
+public class SupplierServiceImpl implements ISupplierService {
      private final SupplierRepository supplierRepository;
      private final ModelMapper modelMapper;
-
-     @Autowired
-     public SupplierServiceImpl(SupplierRepository supplierRepository, ModelMapper modelMapper) {
-         this.supplierRepository = supplierRepository;
-         this.modelMapper = modelMapper;
-     }
 
      @Override
      public SupplierDto addSupplier(SupplierDto supplierDto) {
