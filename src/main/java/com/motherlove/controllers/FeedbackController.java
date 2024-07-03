@@ -61,6 +61,8 @@ public class FeedbackController {
             @RequestParam(value = "productName", required = false) String productName,
             @RequestParam(value = "brandName", required = false) List<String> brandName,
             @RequestParam(value = "categoryName", required = false) List<String> categoryName,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "userName", required = false) String userName,
             @PathVariable(value = "productId") Long productId
     ) {
         Map<String, Object> searchParams = new HashMap<>();
@@ -69,6 +71,8 @@ public class FeedbackController {
         if (productName != null) searchParams.put("productName", productName);
         if (brandName != null) searchParams.put("brandName", brandName);
         if (categoryName != null) searchParams.put("categoryName", categoryName);
+        if (fullName != null) searchParams.put("fullName", fullName);
+        if (userName != null) searchParams.put("userName", userName);
 
         return ResponseEntity.ok(feedbackService.searchFeedback(searchParams, productId));
     }

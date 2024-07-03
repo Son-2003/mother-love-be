@@ -180,6 +180,7 @@ public class FeedbackServiceImpl implements IFeedbackService {
                 case "brandName" -> specs.add(GenericSpecification.joinFieldIn("brand", key, (Collection<?>) value));
                 case "categoryName" ->
                         specs.add(GenericSpecification.joinFieldIn("category", key, (Collection<?>) value));
+                case "fullName", "userName" -> specs.add(GenericSpecification.joinFieldContains("user", key, (String) value));
             }
         });
 
