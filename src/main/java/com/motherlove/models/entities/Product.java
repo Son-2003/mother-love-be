@@ -1,5 +1,6 @@
 package com.motherlove.models.entities;
 
+import com.motherlove.models.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -37,7 +38,8 @@ public class Product {
     private int quantityProduct = 0;
 
     @Column(nullable = false)
-    private int status;
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     @Column(nullable = false, length = 65535)
     private String image;
