@@ -5,16 +5,21 @@ import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.ProductDto;
 import com.motherlove.repositories.ProductRepository;
 import com.motherlove.services.IProductService;
+import com.motherlove.utils.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -33,6 +38,18 @@ public class ProductServiceImpl implements IProductService {
 
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(this::mapToDto);
+    }
+
+    @Override
+    public Page<ProductDto> searchProduct(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Specification<Product> specification = specification(searchParams);
+
+        Page<Product> productsPage = productRepository.findAll(specification, pageable);
+
+        return productsPage.map(this::mapToDto);
     }
 
     @Override
@@ -66,10 +83,23 @@ public class ProductServiceImpl implements IProductService {
         return mapToDto(savedProduct);
     }
 
-    @Override
-    public List<ProductDto> getProductsByBrandAndCategory(Long brandId, Long categoryId) {
-        return productRepository.getProductsByBrandIdAndCategoryId(brandId, categoryId)
-                .stream()
-                .map(this::mapToDto).toList();
+    private Specification<Product> specification(Map<String, Object> searchParams){
+        List<Specification<Product>> specs = new ArrayList<>();
+
+        // Lặp qua từng entry trong searchParams để tạo các Specification tương ứng
+        searchParams.forEach((key, value) -> {
+            switch (key) {
+                case "status" -> specs.add(GenericSpecification.fieldIn(key, (Collection<?>) value));
+                case "productName" -> specs.add(GenericSpecification.fieldContains(key, (String) value));
+                case "brandName" -> specs.add(GenericSpecification.joinFieldIn("brand", key, (Collection<?>) value));
+                case "categoryName" ->
+                        specs.add(GenericSpecification.joinFieldIn("category", key, (Collection<?>) value));
+            }
+        });
+
+        // Tổng hợp tất cả các Specification thành một Specification duy nhất bằng cách sử dụng phương thức reduce của Stream
+        //reduce de ket hop cac spec1(dk1), spec2(dk2),.. thanh 1 specification chung va cac spec ket hop voi nhau thono qua AND
+        return specs.stream().reduce(Specification.where(null), Specification::and);
     }
+
 }

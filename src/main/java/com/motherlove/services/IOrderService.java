@@ -12,6 +12,5 @@ public interface IOrderService {
     Page<OrderResponse> getAllOrderByCustomerId(int pageNo, int pageSize, String sortBy, String sortDir, Long userId);
     OrderResponse getOrderDetail(Long orderId);
     OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId);
-    Page<OrderResponse> searchOrder(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams);
-    Page<OrderResponse> searchOrderUser(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams, Long userId);
+    Page<OrderResponse> searchOrder(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams, Long userId);
 }
