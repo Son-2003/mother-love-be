@@ -26,7 +26,7 @@ public class Report {
     private int reportType;
 
     @Column(nullable = false)
-    private String reason;
+    private String content;
 
     @Column(nullable = false, length = 65535)
     private String image;

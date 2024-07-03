@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -46,13 +43,9 @@ public class OrderServiceImpl implements IOrderService {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        List<Order> ordersPage = orderRepository.findAll();
+        Page<Order> ordersPage = orderRepository.findAll(pageable);
 
-        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(ordersPage);
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
-        return new PageImpl<>(orderResponses.subList(start, end), pageable, orderResponses.size());
+        return ordersPage.map(this::mapOrderToOrderResponse);
     }
 
     @Override
@@ -60,13 +53,9 @@ public class OrderServiceImpl implements IOrderService {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        List<Order> ordersByUserId = orderRepository.findByUser_UserId(userId);
+        Page<Order> ordersByUserId = orderRepository.findByUser_UserId(userId, pageable);
 
-        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(ordersByUserId);
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
-        return new PageImpl<>(orderResponses.subList(start, end), pageable, orderResponses.size());
+        return ordersByUserId.map(this::mapOrderToOrderResponse);
     }
 
     @Override
@@ -114,40 +103,21 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Page<OrderResponse> searchOrder(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams) {
+    public Page<OrderResponse> searchOrder(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams, Long userId) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
+        Page<Order> ordersPage;
         Specification<Order> specification = specification(searchParams);
 
-        // Query database with Specification and userId
-        List<Order> ordersPage = orderRepository.findAll(specification);
+        if(userId != null){
+            ordersPage = orderRepository.findAll(specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("user").get("userId"), userId)), pageable);
+        }else ordersPage = orderRepository.findAll(specification, pageable);
 
-        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(ordersPage);
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
-        return new PageImpl<>(orderResponses.subList(start, end), pageable, orderResponses.size());
+        return ordersPage.map(this::mapOrderToOrderResponse);
     }
 
-    @Override
-    public Page<OrderResponse> searchOrderUser(int pageNo, int pageSize, String sortBy, String sortDir, Map<String, Object> searchParams, Long userId) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
-        Specification<Order> specification = specification(searchParams);
-
-        // Query database with Specification and userId
-        List<Order> ordersPage = orderRepository.findAll(specification.and((root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("user").get("userId"), userId)));
-
-        List<OrderResponse> orderResponses = mapListOrderToOrderResponse(ordersPage);
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), orderResponses.size());
-        return new PageImpl<>(orderResponses.subList(start, end), pageable, orderResponses.size());
-    }
-
+    //map các dkien của user thành 1 specification
     private Specification<Order> specification(Map<String, Object> searchParams){
         List<Specification<Order>> specs = new ArrayList<>();
 
@@ -155,8 +125,7 @@ public class OrderServiceImpl implements IOrderService {
         searchParams.forEach((key, value) -> {
             switch (key) {
                 case "status":
-                case "isFeedBack":
-                    specs.add(GenericSpecification.fieldEquals(key, value));
+                    specs.add(GenericSpecification.fieldIn(key, (Collection<?>) value));
                     break;
                 case "orderDateFrom":
                     // Nếu có cả orderDateFrom và orderDateTo, sử dụng fieldBetween để tạo Specification
@@ -172,23 +141,9 @@ public class OrderServiceImpl implements IOrderService {
                         specs.add(GenericSpecification.fieldLessThan("orderDate", (LocalDateTime) value));
                     }
                     break;
-                case "minAmount":
-                    if (searchParams.containsKey("maxAmount")) {
-                        specs.add(GenericSpecification.fieldBetween("afterTotalAmount", (Float) searchParams.get("minAmount"), (Float) searchParams.get("maxAmount")));
-                    } else {
-                        specs.add(GenericSpecification.fieldGreaterThan("afterTotalAmount", (Float) value));
-                    }
-                    break;
-                case "maxAmount":
-                    if (!searchParams.containsKey("minAmount")) {
-                        specs.add(GenericSpecification.fieldLessThan("afterTotalAmount", (Float) value));
-                    }
-                    break;
-                case "methodName":
-                case "voucherCode":
                 case "fullName":
-                case "phone":
-                    specs.add(GenericSpecification.fieldContains(key, (String) value));
+                case "userName":
+                    specs.add(GenericSpecification.joinFieldContains("user", key, (String) value));
                     break;
             }
         });
@@ -229,19 +184,6 @@ public class OrderServiceImpl implements IOrderService {
             orderDetailDTOs.add(orderDetailDto);
         }
         return orderDetailDTOs;
-    }
-
-    public List<OrderResponse> mapListOrderToOrderResponse(List<Order> orders){
-        List<OrderResponse> orderResponses = new ArrayList<>();
-
-        for(Order order : orders){
-            List<OrderDetailDto> orderDetailDTOs = mapToOrderDetailDto(order);
-            OrderResponse orderResponse = new OrderResponse();
-            orderResponse.setListOrderDetail(orderDetailDTOs);
-            orderResponse.setOrderDto(mapToOrderDto(order));
-            orderResponses.add(orderResponse);
-        }
-        return orderResponses;
     }
 
     public OrderResponse mapOrderToOrderResponse(Order order){

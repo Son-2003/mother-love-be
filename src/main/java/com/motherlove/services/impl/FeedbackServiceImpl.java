@@ -15,17 +15,17 @@ import com.motherlove.models.payload.responseModel.FeedbackResponse;
 import com.motherlove.models.payload.responseModel.ProductResponse;
 import com.motherlove.repositories.*;
 import com.motherlove.services.IFeedbackService;
+import com.motherlove.utils.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -70,6 +70,20 @@ public class FeedbackServiceImpl implements IFeedbackService {
         }
         feedbacks = feedbackRepository.saveAll(feedbacks);
         return feedbacks.stream().map(this::mapToDto).toList();
+    }
+
+    @Override
+    public FeedbackResponse searchFeedback(Map<String, Object> searchParams, Long productId) {
+        Specification<Feedback> specification = specification(searchParams);
+        FeedbackResponse feedbackResponse = new FeedbackResponse();
+        Optional<Product> product = productRepository.findById(productId);
+
+        feedbackResponse.setProduct(mapper.map(product, ProductResponse.class));
+        List<FeedbackDetail> feedbackDetails = feedbackRepository.findAll(specification.and((root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("product").get("productId"), productId))).stream().map(this::mapToDetail).toList();
+        feedbackResponse.setFeedbackDetails(feedbackDetails);
+
+        return feedbackResponse;
     }
 
     @Override
@@ -153,5 +167,25 @@ public class FeedbackServiceImpl implements IFeedbackService {
         feedbackDto.setUser(mapper.map(feedback.getUser(), UserDto.class));
 
         return feedbackDto;
+    }
+
+    private Specification<Feedback> specification(Map<String, Object> searchParams){
+        List<Specification<Feedback>> specs = new ArrayList<>();
+
+        // Lặp qua từng entry trong searchParams để tạo các Specification tương ứng
+        searchParams.forEach((key, value) -> {
+            switch (key) {
+                case "rating" -> specs.add(GenericSpecification.fieldIn(key, (Collection<?>) value));
+                case "productName" -> specs.add(GenericSpecification.joinFieldContains("product", key, (String) value));
+                case "brandName" -> specs.add(GenericSpecification.joinFieldIn("brand", key, (Collection<?>) value));
+                case "categoryName" ->
+                        specs.add(GenericSpecification.joinFieldIn("category", key, (Collection<?>) value));
+                case "fullName", "userName" -> specs.add(GenericSpecification.joinFieldContains("user", key, (String) value));
+            }
+        });
+
+        // Tổng hợp tất cả các Specification thành một Specification duy nhất bằng cách sử dụng phương thức reduce của Stream
+        //reduce de ket hop cac spec1(dk1), spec2(dk2),.. thanh 1 specification chung va cac spec ket hop voi nhau thono qua AND
+        return specs.stream().reduce(Specification.where(null), Specification::and);
     }
 }

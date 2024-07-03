@@ -17,7 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/feedbacks")
@@ -49,6 +51,30 @@ public class FeedbackController {
     @GetMapping("/product/{productId}")
     public ResponseEntity<FeedbackResponse> getFeedbacksOfProduct(@PathVariable long productId){
         return ResponseEntity.ok(feedbackService.viewFeedback(productId));
+    }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/search/{productId}")
+    public ResponseEntity<Object> searchFeedback(
+            @RequestParam(value = "rating", required = false) List<Integer> rating,
+            @RequestParam(value = "productName", required = false) String productName,
+            @RequestParam(value = "brandName", required = false) List<String> brandName,
+            @RequestParam(value = "categoryName", required = false) List<String> categoryName,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "userName", required = false) String userName,
+            @PathVariable(value = "productId") Long productId
+    ) {
+        Map<String, Object> searchParams = new HashMap<>();
+
+        if (rating != null && !rating.isEmpty()) searchParams.put("rating", rating);
+        if (productName != null) searchParams.put("productName", productName);
+        if (brandName != null) searchParams.put("brandName", brandName);
+        if (categoryName != null) searchParams.put("categoryName", categoryName);
+        if (fullName != null) searchParams.put("fullName", fullName);
+        if (userName != null) searchParams.put("userName", userName);
+
+        return ResponseEntity.ok(feedbackService.searchFeedback(searchParams, productId));
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")

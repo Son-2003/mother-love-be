@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -30,6 +32,29 @@ public class ProductController {
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
         return ResponseEntity.ok(productService.getAllProducts(pageNo, pageSize, sortBy, sortDir));
+    }
+
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchProducts(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
+            @RequestParam(value = "status", required = false) List<Integer> status,
+            @RequestParam(value = "productName", required = false) Boolean productName,
+            @RequestParam(value = "brandName", required = false) List<String> brandName,
+            @RequestParam(value = "categoryName", required = false) List<String> categoryName
+    ) {
+        Map<String, Object> searchParams = new HashMap<>();
+
+        if (status != null && !status.isEmpty()) searchParams.put("status", status);
+        if (productName != null) searchParams.put("productName", productName);
+        if (brandName != null) searchParams.put("brandName", brandName);
+        if (categoryName != null) searchParams.put("categoryName", categoryName);
+
+        return ResponseEntity.ok(productService.searchProduct(pageNo, pageSize, sortBy, sortDir, searchParams));
     }
 
     @GetMapping("{id}")
@@ -59,11 +84,4 @@ public class ProductController {
         ProductDto deletedProductDto = productService.deleteProduct(id);
         return ResponseEntity.ok(deletedProductDto);
     }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<ProductDto>> searchProductsByBrandAndCategory(@RequestParam(name = "brand", required = false) Long brandId,
-                                                                             @RequestParam(name = "category", required = false) Long categoryId) {
-        return ResponseEntity.ok(productService.getProductsByBrandAndCategory(brandId, categoryId));
-    }
-
 }
