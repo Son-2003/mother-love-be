@@ -70,9 +70,9 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId, boolean isPreOrder) {
         //Find User
-        Optional<User> user = Optional.ofNullable(userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User")
-        ));
+        );
 
         //Find Address of User
         Optional<Address> address = Optional.ofNullable(addressRepository.findByUser_UserIdAndAddressId(userId, addressId).orElseThrow(
@@ -89,10 +89,10 @@ public class OrderServiceImpl implements IOrderService {
         }
         order.setFeedBack(false);
         address.ifPresent(order::setAddress);
-        user.ifPresent(order::setUser);
+        order.setUser(user);
 
         //Create OrderDetail
-        List<OrderDetail> orderDetails = orderDetailService.createOrderDetails(cartItems, order, isPreOrder);
+        List<OrderDetail> orderDetails = orderDetailService.createOrderDetails(cartItems, order, isPreOrder, user);
 
         float totalAmount = orderDetails.stream().map(OrderDetail::getTotalPrice).reduce(0f, Float::sum);
         order.setTotalAmount(totalAmount);
@@ -103,7 +103,6 @@ public class OrderServiceImpl implements IOrderService {
         // Save Order and OrderDetails
         Order orderCreated = orderRepository.save(order);
         orderDetailRepository.saveAll(orderDetails);
-
         return mapOrderToOrderResponse(orderCreated);
     }
 
