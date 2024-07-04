@@ -1,5 +1,6 @@
 package com.motherlove.models.entities;
 
+import com.motherlove.models.enums.VoucherStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -48,7 +49,8 @@ public class Voucher {
     private float minOrderAmount;
 
     @Column(nullable = false)
-    private int status;
+    @Enumerated(EnumType.STRING)
+    private VoucherStatus status;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

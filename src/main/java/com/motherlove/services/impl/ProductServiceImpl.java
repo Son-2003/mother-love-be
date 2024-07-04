@@ -53,7 +53,6 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    @Transactional
     public ProductDto updateProduct(ProductDto productDto) {
         if (!productRepository.existsById(productDto.getProductId())) {
             throw new ResourceNotFoundException(Product.class.getName(), "ID", productDto.getProductId());
@@ -63,7 +62,6 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    @Transactional
     public ProductDto deleteProduct(long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Product.class.getName(), "ID", id));
         productRepository.delete(product);
@@ -77,7 +75,6 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    @Transactional
     public ProductDto addProduct(ProductDto productDto) {
         Product savedProduct = productRepository.save(mapper.map(productDto, Product.class));
         return mapToDto(savedProduct);
@@ -101,5 +98,4 @@ public class ProductServiceImpl implements IProductService {
         //reduce de ket hop cac spec1(dk1), spec2(dk2),.. thanh 1 specification chung va cac spec ket hop voi nhau thono qua AND
         return specs.stream().reduce(Specification.where(null), Specification::and);
     }
-
 }

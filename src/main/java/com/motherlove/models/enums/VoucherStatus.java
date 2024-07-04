@@ -1,14 +1,12 @@
 package com.motherlove.models.enums;
 
-public enum ProductStatus {
+public enum VoucherStatus {
     INACTIVE(0),
     ACTIVE(1),
-    PRE_ORDER(2),
-    NEAR_OUT_OF_STOCKS(3);
-
+    EXPIRE(2);
     private final int value;
 
-    ProductStatus(int value) {
+    VoucherStatus(int value) {
         this.value = value;
     }
 
