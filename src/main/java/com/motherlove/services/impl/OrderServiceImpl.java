@@ -11,10 +11,12 @@ import com.motherlove.models.payload.responseModel.GiftResponse;
 import com.motherlove.models.payload.responseModel.OrderResponse;
 import com.motherlove.models.payload.responseModel.ProductOrderDetailResponse;
 import com.motherlove.repositories.*;
+import com.motherlove.services.IEmailService;
 import com.motherlove.services.IOrderDetailService;
 import com.motherlove.services.IOrderService;
 import com.motherlove.services.IVoucherService;
 import com.motherlove.utils.GenericSpecification;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
@@ -37,6 +39,7 @@ public class OrderServiceImpl implements IOrderService {
     private final AddressRepository addressRepository;
     private final IVoucherService voucherService;
     private final OrderDetailRepository orderDetailRepository;
+    private final IEmailService emailService;
     private final ModelMapper mapper;
 
     @Override
@@ -103,6 +106,42 @@ public class OrderServiceImpl implements IOrderService {
         // Save Order and OrderDetails
         Order orderCreated = orderRepository.save(order);
         orderDetailRepository.saveAll(orderDetails);
+        if(isPreOrder){
+            Product productPreOrder = productRepository.findById(cartItems.get(0).getProductId())
+                    .orElse(null);
+            String content = "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "table { width: 100%; border-collapse: collapse; }" +
+                    "th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }" +
+                    "th { background-color: #f2f2f2; }" +
+                    "body { font-family: Arial, sans-serif; }" +
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<p class='greeting'>Xin chào " + user.getFullName() + ",</p>" +
+                    "<p>Chúc mừng! Đơn hàng pre-order của bạn đã được xử lý thành công.</p>" +
+                    "<p>Thông tin chi tiết đơn hàng:</p>" +
+                    "<table>" +
+                    "<tr><th>Mã đơn hàng</th><td>" + order.getOrderId() + "</td></tr>" +
+                    "<tr><th>Sản phẩm</th><td>" + productPreOrder.getProductName() + "</td></tr>" +
+                    "<tr><th>Ngày đặt hàng</th><td>" + order.getOrderDate() + "</td></tr>" +
+                    "<tr><th>Số lượng</th><td>" + cartItems.get(0).getQuantity() + "</td></tr>" +
+                    "<tr><th>Tổng giá trị đơn hàng</th><td>" + order.getTotalAmount() + "</td></tr>" +
+                    "</table>" +
+                    "<p>Cảm ơn bạn đã tin tưởng và đặt hàng với chúng tôi. Chúng tôi sẽ sớm liên hệ để thông báo thêm về quá trình vận chuyển và dự kiến thời gian giao hàng.</p>" +
+                    "<p>Trân trọng,</p>" +
+                    "<p>[MotherLove]</p>" +
+                    "</body>" +
+                    "</html>";
+            try {
+                emailService.sendEmail(user.getEmail(), "[MotherLove] - Đơn hàng pre-order đã được xử lý thành công", content);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
         return mapOrderToOrderResponse(orderCreated);
     }
 

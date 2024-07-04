@@ -38,39 +38,6 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
                     .orElseThrow(() -> new ResourceNotFoundException("Product"));
             if((isPreOrder && product.getStatus() != ProductStatus.PRE_ORDER) || (!isPreOrder && product.getStatus() == ProductStatus.PRE_ORDER)){
                 throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This product cannot PreOrder!");
-            }else {
-                String content = "<html>" +
-                        "<head>" +
-                        "<style>" +
-                        "table { width: 100%; border-collapse: collapse; }" +
-                        "th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }" +
-                        "th { background-color: #f2f2f2; }" +
-                        "body { font-family: Arial, sans-serif; }" +
-                        "</style>" +
-                        "</head>" +
-                        "<body>" +
-                        "<p class='greeting'>Xin chào " + user.getFullName() + ",</p>" +
-                        "<p>Chúc mừng! Đơn hàng pre-order của bạn đã được xử lý thành công.</p>" +
-                        "<p>Thông tin chi tiết đơn hàng:</p>" +
-                        "<table>" +
-                        "<tr><th>Mã đơn hàng</th><td>" + order.getOrderId() + "</td></tr>" +
-                        "<tr><th>Sản phẩm</th><td>" + product.getProductName() + "</td></tr>" +
-                        "<tr><th>Ngày đặt hàng</th><td>" + order.getOrderDate() + "</td></tr>" +
-                        "<tr><th>Số lượng</th><td>" + orderDetail.getQuantity() + "</td></tr>" +
-                        "<tr><th>Tổng giá trị đơn hàng</th><td>" + order.getTotalAmount() + "</td></tr>" +
-                        "</table>" +
-                        "<p>Cảm ơn bạn đã tin tưởng và đặt hàng với chúng tôi. Chúng tôi sẽ sớm liên hệ để thông báo thêm về quá trình vận chuyển và dự kiến thời gian giao hàng.</p>" +
-                        "<p>Trân trọng,</p>" +
-                        "<p>[Tên công ty/Hệ thống]</p>" +
-                        "</body>" +
-                        "</html>";
-
-
-                try {
-                    emailService.sendEmail(user.getEmail(), "[MotherLove] - Đơn hàng pre-order đã được xử lý thành công", content);
-                } catch (MessagingException e) {
-                    throw new RuntimeException(e);
-                }
             }
             orderDetail.setQuantity(item.getQuantity());
             orderDetail.setUnitPrice(product.getPrice());
@@ -100,7 +67,6 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
                                 "<table>" +
                                 "<tr><th>Mã sản phẩm</th><td>" + product.getProductId() + "</td></tr>" +
                                 "<tr><th>Tên sản phẩm</th><td>" + product.getProductName() + "</td></tr>" +
-                                "<tr><th>Hình ảnh sản phẩm</th><td>" + product.getImage() + "</td></tr>" +
                                 "<tr><th>Số lượng hiện tại trong kho</th><td>" + product.getQuantityProduct() + "</td></tr>" +
                                 "<tr><th>Số lượng cần nhập thêm</th><td class='highlight'>" + 50 + "</td></tr>" +
                                 "</table>" +
