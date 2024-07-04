@@ -1,5 +1,6 @@
 package com.motherlove.models.payload.dto;
 
+import com.motherlove.models.enums.VoucherStatus;
 import com.motherlove.utils.AppConstants;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -42,5 +43,5 @@ public class VoucherDto {
     @FutureOrPresent(message = "EndDate cannot be in the past")
     private LocalDateTime endDate;
 
-    private int status;
+    private VoucherStatus status;
 }

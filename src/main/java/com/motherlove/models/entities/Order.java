@@ -1,5 +1,6 @@
 package com.motherlove.models.entities;
 
+import com.motherlove.models.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,7 +28,8 @@ public class Order {
     private LocalDateTime orderDate;
 
     @Column(nullable = false)
-    private int status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @Column(nullable = false)
     private boolean isFeedBack;

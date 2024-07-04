@@ -1,6 +1,7 @@
 package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.*;
+import com.motherlove.models.enums.OrderStatus;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.OrderDetailDto;
 import com.motherlove.models.payload.dto.OrderDto;
@@ -81,7 +82,7 @@ public class OrderServiceImpl implements IOrderService {
         //Create Order
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus(1);
+        order.setStatus(OrderStatus.PENDING);
         order.setFeedBack(false);
         address.ifPresent(order::setAddress);
         user.ifPresent(order::setUser);

@@ -4,6 +4,7 @@ import com.motherlove.models.entities.CustomerVoucher;
 import com.motherlove.models.entities.Order;
 import com.motherlove.models.entities.User;
 import com.motherlove.models.entities.Voucher;
+import com.motherlove.models.enums.VoucherStatus;
 import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.CustomerVoucherDto;
@@ -71,7 +72,7 @@ public class VoucherServiceImpl implements IVoucherService {
 
     @Override
     public VoucherDto addVoucher(VoucherDto voucherDto) {
-        voucherDto.setStatus(1);
+        voucherDto.setStatus(VoucherStatus.ACTIVE);
         Voucher voucher = mapper.map(voucherDto, Voucher.class);
         Voucher voucherDuplicate =  voucherRepository.findByVoucherCode(voucher.getVoucherCode());
 
@@ -188,7 +189,7 @@ public class VoucherServiceImpl implements IVoucherService {
     @Scheduled(fixedRate = 10000)
     public void handleVoucherExpire() {
         List<Voucher> vouchersExpire = voucherRepository.findVoucherExpire(LocalDateTime.now());
-        vouchersExpire.forEach(voucher -> voucher.setStatus(2));
+        vouchersExpire.forEach(voucher -> voucher.setStatus(VoucherStatus.EXPIRE));
         voucherRepository.saveAll(vouchersExpire);
     }
 

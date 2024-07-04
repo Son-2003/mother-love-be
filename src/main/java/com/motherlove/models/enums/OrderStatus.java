@@ -1,14 +1,14 @@
 package com.motherlove.models.enums;
 
-public enum ProductStatus {
-    INACTIVE(0),
-    ACTIVE(1),
-    PRE_ORDER(2),
-    NEAR_OUT_OF_STOCKS(3);
-
+public enum OrderStatus {
+    PRE_ORDER(0),
+    PENDING(1),
+    CONFIRMED(2),
+    CANCELLED(3),
+    COMPLETED(4);
     private final int value;
 
-    ProductStatus(int value) {
+    OrderStatus(int value) {
         this.value = value;
     }
 
