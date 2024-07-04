@@ -36,7 +36,6 @@ public class ProductController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
-    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<Object> searchProducts(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
