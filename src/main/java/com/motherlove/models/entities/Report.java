@@ -28,6 +28,9 @@ public class Report {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = true)
+    private String response;
+
     @Column(nullable = false, length = 65535)
     private String image;
 
@@ -40,6 +43,10 @@ public class Report {
     private LocalDateTime lastModifiedDate;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    @JoinColumn(name = "questionerId", referencedColumnName = "userId", nullable = false)
+    private User questioner;
+
+    @ManyToOne
+    @JoinColumn(name = "answererId", referencedColumnName = "userId", nullable = true)
+    private User answerer;
 }

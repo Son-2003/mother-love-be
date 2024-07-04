@@ -76,8 +76,11 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<PointTransaction> pointTransactions;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "questioner")
     private Set<Report> reports;
+
+    @OneToMany(mappedBy = "answerer")
+    private Set<Report> reportResponses;
 
     @OneToMany(mappedBy = "user")
     private Set<Blog> blogs;
