@@ -32,7 +32,6 @@ public class PointTransactionController {
         return ResponseEntity.ok(mapEntityToDto(pointTransaction));
     }
 
-
     @GetMapping("/get-by-user")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     //TODO: authorize user has permission with transation
