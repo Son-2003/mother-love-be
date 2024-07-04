@@ -2,6 +2,7 @@ package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.*;
 import com.motherlove.models.enums.OrderStatus;
+import com.motherlove.models.enums.ProductStatus;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.StockTransactionDto;
 import com.motherlove.models.payload.requestModel.ImportProduct;
@@ -38,6 +39,7 @@ public class StockTransactionServiceImpl implements IStockTransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product"));
         //Update Quantity Product
         product.setQuantityProduct(product.getQuantityProduct() + importProduct.getQuantity());
+        product.setStatus(ProductStatus.ACTIVE);
 
         //Update Order have status "PRE_ODER"
         List<Order> orders = orderRepository.findByStatusOrderByOrderDate(OrderStatus.PRE_ORDER);
