@@ -1,15 +1,12 @@
 package com.motherlove.models.payload.dto;
 
-import com.motherlove.models.entities.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,5 +28,5 @@ public class BlogDto {
     private Long userId;
 
     @NotNull(message = "Blog's product cannot be null")
-    private Long productId;
+    private List<Long> productId;
 }
