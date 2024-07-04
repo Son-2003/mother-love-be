@@ -1,9 +1,6 @@
 package com.motherlove.services.impl;
 
-import com.motherlove.models.entities.Order;
-import com.motherlove.models.entities.Product;
-import com.motherlove.models.entities.StockTransaction;
-import com.motherlove.models.entities.Supplier;
+import com.motherlove.models.entities.*;
 import com.motherlove.models.enums.OrderStatus;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.StockTransactionDto;
@@ -37,7 +34,7 @@ public class StockTransactionServiceImpl implements IStockTransactionService {
     public StockTransactionDto importProduct(ImportProduct importProduct) {
         Supplier supplier = supplierRepository.findById(importProduct.getSupplierId())
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier"));
-        Product product = productRepository.findById(importProduct.getSupplierId())
+        Product product = productRepository.findById(importProduct.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product"));
         //Update Quantity Product
         product.setQuantityProduct(product.getQuantityProduct() + importProduct.getQuantity());
@@ -45,6 +42,18 @@ public class StockTransactionServiceImpl implements IStockTransactionService {
         //Update Order have status "PRE_ODER"
         List<Order> orders = orderRepository.findByStatusOrderByOrderDate(OrderStatus.PRE_ORDER);
 
+        for(Order order: orders){
+            boolean hasZeroQuantity = order.getOrderDetails().stream()
+                    .anyMatch(orderDetail -> orderDetail.getProduct().getQuantityProduct() == 0);
+            if(!hasZeroQuantity){
+                for (OrderDetail orderDetail : order.getOrderDetails()) {
+                    product.setQuantityProduct(product.getQuantityProduct() - orderDetail.getQuantity());
+                    productRepository.save(product);
+                    orderDetailRepository.save(orderDetail);
+                }
+                order.setStatus(OrderStatus.PENDING);
+            }
+        }
         StockTransaction stockTransaction = new StockTransaction();
         stockTransaction.setStockTransactionDate(LocalDateTime.now());
         stockTransaction.setQuantity(importProduct.getQuantity());
