@@ -43,7 +43,7 @@ public class OrderController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
-    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     @GetMapping("/search")
     public ResponseEntity<Object> searchOrders(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
