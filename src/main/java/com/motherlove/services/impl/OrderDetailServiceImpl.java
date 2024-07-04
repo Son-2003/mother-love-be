@@ -4,6 +4,7 @@ import com.motherlove.models.entities.Order;
 import com.motherlove.models.entities.OrderDetail;
 import com.motherlove.models.entities.Product;
 import com.motherlove.models.entities.Promotion;
+import com.motherlove.models.enums.ProductStatus;
 import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.requestModel.CartItem;
@@ -27,7 +28,7 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     private final ProductRepository productRepository;
     private final PromotionRepository promotionRepository;
     @Override
-    public List<OrderDetail> createOrderDetails(List<CartItem> cartItems, Order order) {
+    public List<OrderDetail> createOrderDetails(List<CartItem> cartItems, Order order, boolean isPreOrder) {
         List<OrderDetail> orderDetails = new ArrayList<>();
 
         //Create OrderDetail
@@ -35,31 +36,34 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
             OrderDetail orderDetail = new OrderDetail();
             Product product = productRepository.findById(item.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product"));
-
+            if((isPreOrder && product.getStatus() != ProductStatus.PRE_ORDER) || (!isPreOrder && product.getStatus() == ProductStatus.PRE_ORDER)){
+                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "This product cannot PreOrder!");
+            }
             orderDetail.setQuantity(item.getQuantity());
             orderDetail.setUnitPrice(product.getPrice());
             orderDetail.setOrder(order);
             orderDetail.setProduct(product);
             orderDetail.setTotalPrice(product.getPrice() * item.getQuantity());
 
-            //Update quantity of Product
-            int quantityUpdated = product.getQuantityProduct();
-            if(quantityUpdated > item.getQuantity()){
-                product.setQuantityProduct(product.getQuantityProduct() - item.getQuantity());
-            }else {
-                throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.getProductName() + " is not enough!");
-            }
-
-            //Get Promotion of Product and update quantity gift in Promotion
-            Optional<Promotion> promotion = promotionRepository.findPromotionValid(product.getProductId());
-            if(promotion.isPresent()){
-                if(promotion.get().getAvailableQuantity() < promotion.get().getQuantityOfGift()){
-                    throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.getProductName() + "'s gift is not enough!");
+            if(!isPreOrder){
+                //Update quantity of Product
+                int quantityUpdated = product.getQuantityProduct();
+                if(quantityUpdated > item.getQuantity()){
+                    product.setQuantityProduct(product.getQuantityProduct() - item.getQuantity());
                 }else {
-                    promotion.get().setAvailableQuantity(promotion.get().getAvailableQuantity() - promotion.get().getQuantityOfGift());
-                    orderDetail.setPromotion(promotion.get());
+                    throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.getProductName() + " is not enough!");
                 }
-            }else orderDetail.setPromotion(null);
+                //Get Promotion of Product and update quantity gift in Promotion
+                Optional<Promotion> promotion = promotionRepository.findPromotionValid(product.getProductId());
+                if(promotion.isPresent()){
+                    if(promotion.get().getAvailableQuantity() < promotion.get().getQuantityOfGift()){
+                        throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.getProductName() + "'s gift is not enough!");
+                    }else {
+                        promotion.get().setAvailableQuantity(promotion.get().getAvailableQuantity() - promotion.get().getQuantityOfGift());
+                        orderDetail.setPromotion(promotion.get());
+                    }
+                }else orderDetail.setPromotion(null);
+            }
 
             orderDetails.add(orderDetail);
         }

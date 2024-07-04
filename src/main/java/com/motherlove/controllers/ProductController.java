@@ -1,5 +1,6 @@
 package com.motherlove.controllers;
 
+import com.motherlove.models.enums.ProductStatus;
 import com.motherlove.models.payload.dto.ProductDto;
 import com.motherlove.services.IProductService;
 import com.motherlove.utils.AppConstants;
@@ -28,7 +29,7 @@ public class ProductController {
     public ResponseEntity<Object> getAllProducts(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_PRODUCT_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
         return ResponseEntity.ok(productService.getAllProducts(pageNo, pageSize, sortBy, sortDir));
@@ -40,9 +41,9 @@ public class ProductController {
     public ResponseEntity<Object> searchProducts(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_PRODUCT_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
-            @RequestParam(value = "status", required = false) List<Integer> status,
+            @RequestParam(value = "status", required = false) List<ProductStatus> status,
             @RequestParam(value = "productName", required = false) Boolean productName,
             @RequestParam(value = "brandName", required = false) List<String> brandName,
             @RequestParam(value = "categoryName", required = false) List<String> categoryName
