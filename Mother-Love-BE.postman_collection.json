@@ -4,7 +4,7 @@
 		"name": "Mother-Love-BE",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "29956265",
-		"_collection_link": "https://martian-capsule-948520.postman.co/workspace/cedbe8b2-557f-40cb-892b-a176a21815c7/collection/29956265-deb83d05-1804-4356-b6aa-0abbba3ab894?action=share&source=collection_link&creator=29956265"
+		"_collection_link": "https://martian-capsule-948520.postman.co/workspace/My-Workspace~cedbe8b2-557f-40cb-892b-a176a21815c7/collection/29956265-deb83d05-1804-4356-b6aa-0abbba3ab894?action=share&source=collection_link&creator=29956265"
 	},
 	"item": [
 		{
@@ -155,14 +155,14 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZHVjc29uQDEyMyIsImlhdCI6MTcxODgxMDIxOCwiZXhwIjoxNzE4ODk2NjE4fQ.tNdIQRSQYhR4o8q0XhHfkswoH5BawyCoS83k2uX0kH1MtF4NTmOKzWUS6udOEEML"
+								"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcyMDAxNDg5NiwiZXhwIjoxNzIwMTAxMjk2fQ.IgD3_9T0uVo-Bhw38I7orlk2zhoW1x1k-Xz93CUR-0wudaWIy6VvAJDdmciLkJIo"
 							}
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"addressLine\": \"S106\",\r\n  \"district\": \"Q9\",\r\n  \"city\": \"HCM\",\r\n  \"user\": {\r\n    \"userId\": 4\r\n  }\r\n}",
+							"raw": "{\r\n  \"addressLine\": \"S106\",\r\n  \"district\": \"Q9\",\r\n  \"city\": \"HCM\",\r\n  \"user\": {\r\n    \"userId\": 1\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -420,6 +420,56 @@
 					"response": []
 				},
 				{
+					"name": "Search Feedback",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcyMDAwMDk1MCwiZXhwIjoxNzIwMDg3MzUwfQ.5lc1UorEJWDQGrkKaB6o1KOzNVqaoDMgq2XCy5xViUaO9X4eumI5DI4a20tTzgEf"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/feedbacks/search/1?rating=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"feedbacks",
+								"search",
+								"1"
+							],
+							"query": [
+								{
+									"key": "rating",
+									"value": "1"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
 					"name": "Create Feedback",
 					"request": {
 						"auth": {
@@ -501,56 +551,6 @@
 						"method": "DELETE",
 						"header": [],
 						"url": "http://localhost:8080/api/v1/feedbacks/1"
-					},
-					"response": []
-				},
-				{
-					"name": "Search Feedback",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcyMDAwMDk1MCwiZXhwIjoxNzIwMDg3MzUwfQ.5lc1UorEJWDQGrkKaB6o1KOzNVqaoDMgq2XCy5xViUaO9X4eumI5DI4a20tTzgEf"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/v1/feedbacks/search/1?rating=1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"v1",
-								"feedbacks",
-								"search",
-								"1"
-							],
-							"query": [
-								{
-									"key": "rating",
-									"value": "1"
-								}
-							]
-						},
-						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 					},
 					"response": []
 				}
@@ -1269,7 +1269,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/product?pageNo=0&pageSize=10&sortBy=price&sortDir=desc",
+							"raw": "http://localhost:8080/api/v1/product?pageNo=0&pageSize=10&sortBy=price&sortDir=esc",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1295,7 +1295,7 @@
 								},
 								{
 									"key": "sortDir",
-									"value": "desc"
+									"value": "esc"
 								}
 							]
 						},
@@ -1866,7 +1866,154 @@
 					"name": "Get Blog",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/blogs?pageNo=0&pageSize=10&sortBy=blogId&sortDir=asc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"blogs"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "blogId"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blog By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/blogs/2"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcyMDA3MzQ5MiwiZXhwIjoxNzIwMTU5ODkyfQ.ShFp4LPC6isd-iWaDDvm8BU7rGOX4xjJdBeYlIbrKdtGozAWV_hcgvtwDctgIHog"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"blogId\": 0,\r\n  \"title\": \"stringgg\",\r\n  \"content\": \"string\",\r\n  \"image\": \"string\",\r\n  \"userId\": 2,\r\n  \"productId\": [\r\n    1, 2\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/blogs"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcyMDA3MzQ5MiwiZXhwIjoxNzIwMTU5ODkyfQ.ShFp4LPC6isd-iWaDDvm8BU7rGOX4xjJdBeYlIbrKdtGozAWV_hcgvtwDctgIHog"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"blogId\": 2,\r\n  \"title\": \"string\",\r\n  \"content\": \"string\",\r\n  \"image\": \"string\",\r\n  \"userId\": 2,\r\n  \"productId\": [\r\n    3\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/blogs"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJuZ3V5ZW50aWVuZHVuZyIsImlhdCI6MTcyMDA3MzQ5MiwiZXhwIjoxNzIwMTU5ODkyfQ.ShFp4LPC6isd-iWaDDvm8BU7rGOX4xjJdBeYlIbrKdtGozAWV_hcgvtwDctgIHog"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/blogs/3"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/blogs/search?pageNo=0&pageSize=10&sortBy=blogId&sortDir=asc&searchText=str",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"search"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "blogId"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								},
+								{
+									"key": "searchText",
+									"value": "str"
+								}
+							]
+						}
 					},
 					"response": []
 				}

@@ -21,6 +21,12 @@ public class AppConstants {
     public static final String DEFAULT_SORT_BY_PAYMENT_HISTORY_ID = "paymentHistoryId";
     public static final String DEFAULT_SORT_BY_SUPPLIER_ID = "supplierId";
     public static final String DEFAULT_SORT_BY_VOUCHER_ID = "voucherId";
+    public static final String DEFAULT_SORT_BY_ADDRESS_ID = "addressId";
+    public static final String DEFAULT_SORT_BY_BRAND_ID = "brandId";
+    public static final String DEFAULT_SORT_BY_ORDER_ID = "orderId";
+    public static final String DEFAULT_SORT_BY_TRANSACTION_ID = "transactionId";
+    public static final String DEFAULT_SORT_BY_PRODUCT_ID = "productId";
+    public static final String DEFAULT_SORT_BY_STOCK_TRANSACTION_ID = "stockTransactionId";
     public static final String DEFAULT_SORT_BY_BLOG_ID = "blogId";
     public static final String DEFAULT_SORT_BY_ASSIGNED_DATE = "assignedDate";
     public static final String DEFAULT_SORT_BY_USER_ID = "userId";

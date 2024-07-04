@@ -1,5 +1,6 @@
 package com.motherlove.models.payload.dto;
 
+import com.motherlove.models.enums.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class ProductDto {
     private String description;
     private float price;
     private int quantityProduct;
-    private int status;
+    private ProductStatus status;
     private String image;
     private CategoryDto category;
     private BrandDto brand;

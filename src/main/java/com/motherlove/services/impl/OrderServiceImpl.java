@@ -1,6 +1,7 @@
 package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.*;
+import com.motherlove.models.enums.OrderStatus;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.OrderDetailDto;
 import com.motherlove.models.payload.dto.OrderDto;
@@ -67,7 +68,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId) {
+    public OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId, boolean isPreOrder) {
         //Find User
         Optional<User> user = Optional.ofNullable(userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User")
@@ -81,13 +82,17 @@ public class OrderServiceImpl implements IOrderService {
         //Create Order
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus(1);
+        if (isPreOrder) {
+            order.setStatus(OrderStatus.PRE_ORDER);
+        } else {
+            order.setStatus(OrderStatus.PENDING);
+        }
         order.setFeedBack(false);
         address.ifPresent(order::setAddress);
         user.ifPresent(order::setUser);
 
         //Create OrderDetail
-        List<OrderDetail> orderDetails = orderDetailService.createOrderDetails(cartItems, order);
+        List<OrderDetail> orderDetails = orderDetailService.createOrderDetails(cartItems, order, isPreOrder);
 
         float totalAmount = orderDetails.stream().map(OrderDetail::getTotalPrice).reduce(0f, Float::sum);
         order.setTotalAmount(totalAmount);

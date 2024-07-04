@@ -23,7 +23,11 @@ public class BrandController {
     @Operation(summary = "Get List Brands", description = "Get List Brands")
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @GetMapping
-    public ResponseEntity<Object> getAllBrands(@RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo, @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize, @RequestParam(name = "sortBy", defaultValue = "brandId", required = false) String sortBy, @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
+    public ResponseEntity<Object> getAllBrands(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_BRAND_ID, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
         return ResponseEntity.ok(brandService.getAllBrands(pageNo, pageSize, sortBy, sortDir));
     }
 

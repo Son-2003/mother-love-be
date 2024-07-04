@@ -1,5 +1,6 @@
 package com.motherlove.models.payload.responseModel;
 
+import com.motherlove.models.enums.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,6 @@ public class ProductResponse {
     private String description;
     private float price;
     private int quantityProduct;
-    private int status;
+    private ProductStatus status;
     private String image;
 }

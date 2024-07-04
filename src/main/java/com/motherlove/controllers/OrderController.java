@@ -1,5 +1,6 @@
 package com.motherlove.controllers;
 
+import com.motherlove.models.enums.OrderStatus;
 import com.motherlove.models.payload.requestModel.CartItem;
 import com.motherlove.models.payload.responseModel.OrderResponse;
 import com.motherlove.services.IOrderService;
@@ -35,7 +36,7 @@ public class OrderController {
     public ResponseEntity<Object> getAllOrder(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_ORDER_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ){
         return ResponseEntity.ok(orderService.getAllOrder(pageNo, pageSize, sortBy, sortDir));
@@ -47,11 +48,11 @@ public class OrderController {
     public ResponseEntity<Object> searchOrders(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "orderId", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_ORDER_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
             @RequestParam(value = "orderDateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime orderDateFrom,
             @RequestParam(value = "orderDateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime orderDateTo,
-            @RequestParam(value = "status", required = false) List<Integer> status,
+            @RequestParam(value = "status", required = false) List<OrderStatus> status,
             @RequestParam(value = "fullName", required = false) String fullName,
             @RequestParam(value = "userName", required = false) String userName,
             @RequestParam(name = "userId", required = false) Long userId
@@ -73,7 +74,7 @@ public class OrderController {
     public ResponseEntity<Object> getAllOrderByUserId(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "categoryId", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_ORDER_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
             @PathVariable(name = "userId") Long userId
     ){
@@ -91,8 +92,8 @@ public class OrderController {
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     @PostMapping
-    public ResponseEntity<Object> addOrder(@RequestBody List<CartItem> cartItems, @RequestParam Long voucherId, @RequestParam Long userId, @RequestParam Long addressId) {
-        OrderResponse orderResponse = orderService.createOrder(cartItems, userId, addressId, voucherId);
+    public ResponseEntity<Object> addOrder(@RequestBody List<CartItem> cartItems, @RequestParam Long voucherId, @RequestParam Long userId, @RequestParam Long addressId, @RequestParam boolean isPreOrder) {
+        OrderResponse orderResponse = orderService.createOrder(cartItems, userId, addressId, voucherId, isPreOrder);
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 

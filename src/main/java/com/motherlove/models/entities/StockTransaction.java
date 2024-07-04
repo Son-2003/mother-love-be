@@ -29,7 +29,7 @@ public class StockTransaction {
     private int quantity;
 
     @Column(nullable = false)
-    private int totalPrice;
+    private float totalPrice;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

@@ -29,7 +29,7 @@ public class AddressController {
     public ResponseEntity<Object> getAllAddress(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "addressId", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_ADDRESS_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
         var list = addressService.getAllAddresses(pageNo, pageSize, sortBy, sortDir);
@@ -43,7 +43,7 @@ public class AddressController {
     public ResponseEntity<Object> getAllAddressByUserId(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "addressId", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_ADDRESS_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
             @RequestParam(name = "userId") Long userId
     ) {
