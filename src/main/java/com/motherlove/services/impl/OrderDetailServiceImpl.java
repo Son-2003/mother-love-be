@@ -80,6 +80,8 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
                         } catch (MessagingException e) {
                             throw new RuntimeException(e);
                         }
+                    } else if (product.getQuantityProduct() == 0) {
+                        product.setStatus(ProductStatus.INACTIVE);
                     }
                 }else {
                     throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Quantity of " + product.getProductName() + " is not enough!");
