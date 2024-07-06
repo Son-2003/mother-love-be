@@ -71,6 +71,15 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public OrderResponse updateStatusPaymentSuccess(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order"));
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        return mapOrderToOrderResponse(orderRepository.save(order));
+    }
+
+    @Override
     public OrderResponse createOrder(List<CartItem> cartItems, Long userId, Long addressId, Long voucherId, boolean isPreOrder) {
         //Find User
         User user = userRepository.findById(userId).orElseThrow(
