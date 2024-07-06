@@ -120,7 +120,10 @@ public class BlogServiceImpl implements IBlogService {
         });
         productBlogRepository.saveAll(productBlogNew);
 
-        return customResponse(blog);
+        blog.setTitle(blogDto.getTitle());
+        blog.setContent(blogDto.getContent());
+        blog.setImage(blogDto.getImage());
+        return customResponse(blogRepository.save(blog));
     }
 
     @Override
