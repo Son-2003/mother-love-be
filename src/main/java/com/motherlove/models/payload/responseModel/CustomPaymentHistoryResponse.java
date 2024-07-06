@@ -1,5 +1,6 @@
 package com.motherlove.models.payload.responseModel;
 
+import com.motherlove.models.enums.PaymentHistoryStatus;
 import com.motherlove.models.payload.dto.OrderDto;
 import com.motherlove.models.payload.dto.PaymentMethodDto;
 import jakarta.validation.constraints.NotEmpty;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public class CustomPaymentHistoryResponse {
     private Long paymentHistoryId;
     private float amount;
-    private int status;
+    private PaymentHistoryStatus status;
     private LocalDateTime createdDate;
     private PaymentMethodDto paymentMethod;
     private OrderDto order;

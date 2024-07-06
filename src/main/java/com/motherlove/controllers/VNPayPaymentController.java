@@ -27,7 +27,8 @@ public class VNPayPaymentController {
     ) {
         String status = request.getParameter("vnp_ResponseCode");
         // response.sendRedirect("FE_URL"), FE check if response code is 00 => success
-        // FE call api to save order to db
+        // Save payment history
+        // Update order status
         if (status.equals("00")) {
             return ResponseEntity.ok(new VNPayResponse("00", "Success", ""));
         } else {

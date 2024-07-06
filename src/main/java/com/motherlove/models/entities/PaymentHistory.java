@@ -1,5 +1,6 @@
 package com.motherlove.models.entities;
 
+import com.motherlove.models.enums.PaymentHistoryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,7 +27,8 @@ public class PaymentHistory {
     private float amount;
 
     @Column(nullable = false)
-    private int status;
+    @Enumerated(EnumType.STRING)
+    private PaymentHistoryStatus status;
 
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
