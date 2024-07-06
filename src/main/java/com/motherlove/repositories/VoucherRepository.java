@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     Voucher findByVoucherCode(String voucherCode);
-    @Query("SELECT v FROM Voucher v WHERE (:now < v.endDate) and (v.quantity > 0)")
+    @Query("SELECT v FROM Voucher v WHERE (:now < v.endDate) and (v.quantity > 0) and v.status = 'ACTIVE'")
     Page<Voucher> findVouchersValidAt(LocalDateTime now, Pageable pageable);
 
     @Query("SELECT v FROM Voucher v WHERE ((:now > v.endDate or v.quantity = 0) and v.status = 'ACTIVE')")
