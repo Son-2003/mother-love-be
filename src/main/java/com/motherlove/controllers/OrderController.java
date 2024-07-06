@@ -88,6 +88,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderDetail(orderId));
     }
 
+    @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @PutMapping("/{orderId}")
+    public ResponseEntity<Object> updateStatusPaymentSuccess(@PathVariable(name = "orderId") Long orderId){
+        return ResponseEntity.ok(orderService.updateStatusPaymentSuccess(orderId));
+    }
+
     @ApiResponse(responseCode = "201", description = "Http Status 201 Created")
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
