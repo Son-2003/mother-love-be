@@ -43,7 +43,7 @@ public class ProductController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_PRODUCT_ID, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
             @RequestParam(value = "status", required = false) List<ProductStatus> status,
-            @RequestParam(value = "productName", required = false) Boolean productName,
+            @RequestParam(value = "productName", required = false) String productName,
             @RequestParam(value = "brandName", required = false) List<String> brandName,
             @RequestParam(value = "categoryName", required = false) List<String> categoryName
     ) {
