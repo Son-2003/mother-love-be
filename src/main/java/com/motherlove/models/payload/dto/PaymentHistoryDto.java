@@ -2,6 +2,7 @@ package com.motherlove.models.payload.dto;
 
 import com.motherlove.models.entities.Order;
 import com.motherlove.models.entities.PaymentMethod;
+import com.motherlove.models.enums.PaymentHistoryStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class PaymentHistoryDto {
 
     private float amount;
 
-    private int status;
+    private PaymentHistoryStatus status;
 
     private LocalDateTime createdDate;
 
