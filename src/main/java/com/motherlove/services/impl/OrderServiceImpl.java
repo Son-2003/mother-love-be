@@ -71,7 +71,13 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderResponse updateStatusPaymentSuccess(Long orderId) {
+    public Order getOrderByOrderId(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order"));
+    }
+
+    @Override
+    public OrderResponse updateOrderStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
 

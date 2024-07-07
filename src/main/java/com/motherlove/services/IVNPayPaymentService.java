@@ -5,4 +5,5 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface IVNPayPaymentService {
     VNPayResponse createVNPayPayment(HttpServletRequest request);
+    void handleVNPayResponse(HttpServletRequest request);
 }

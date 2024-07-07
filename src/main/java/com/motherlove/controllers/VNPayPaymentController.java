@@ -1,6 +1,7 @@
 package com.motherlove.controllers;
 
 import com.motherlove.models.payload.responseModel.VNPayResponse;
+import com.motherlove.services.IPaymentHistoryService;
 import com.motherlove.services.IVNPayPaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/payment")
@@ -21,18 +24,16 @@ public class VNPayPaymentController {
         return ResponseEntity.ok(vnPayPaymentService.createVNPayPayment(request));
     }
     @GetMapping("/vn-pay-callback")
-    public ResponseEntity<VNPayResponse> payCallbackHandler(
+    public void payCallbackHandler(
             HttpServletRequest request,
             HttpServletResponse response
-    ) {
+    ) throws IOException {
+        vnPayPaymentService.handleVNPayResponse(request);
         String status = request.getParameter("vnp_ResponseCode");
-        // response.sendRedirect("FE_URL"), FE check if response code is 00 => success
-        // Save payment history
-        // Update order status
         if (status.equals("00")) {
-            return ResponseEntity.ok(new VNPayResponse("00", "Success", ""));
+            response.sendRedirect("https://motherlove.onrender.com/success");
         } else {
-            return ResponseEntity.badRequest().body(new VNPayResponse("99", "Failed", ""));
+            response.sendRedirect("https://motherlove.onrender.com/fail");
         }
     }
 }
