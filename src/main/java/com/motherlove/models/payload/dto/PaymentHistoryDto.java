@@ -5,10 +5,7 @@ import com.motherlove.models.entities.PaymentMethod;
 import com.motherlove.models.enums.PaymentHistoryStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PaymentHistoryDto {
     private Long paymentHistoryId;
 
