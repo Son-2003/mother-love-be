@@ -73,6 +73,7 @@ public class AuthServiceImpl implements IAuthService {
         Role userRole = roleRepository.findByRoleName("ROLE_MEMBER")
                 .orElseThrow(() -> new MotherLoveApiException(HttpStatus.BAD_REQUEST, "User Role not set."));
         user.setRole(userRole);
+        user.setPassword(passwordEncoder.encode(signupDto.getPassword()));
         user = userRepository.save(user);
 
         String accessToken = jwtTokenProvider.generateAccessToken(user);
