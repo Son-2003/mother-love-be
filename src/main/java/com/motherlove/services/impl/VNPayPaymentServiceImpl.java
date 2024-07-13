@@ -8,6 +8,7 @@ import com.motherlove.models.payload.dto.PaymentHistoryDto;
 import com.motherlove.models.payload.responseModel.VNPayResponse;
 import com.motherlove.services.IOrderService;
 import com.motherlove.services.IPaymentHistoryService;
+import com.motherlove.services.IPointTransactionService;
 import com.motherlove.services.IVNPayPaymentService;
 import com.motherlove.utils.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ public class VNPayPaymentServiceImpl implements IVNPayPaymentService {
     private final VNPayConfig vnPayConfig;
     private final IPaymentHistoryService paymentHistoryService;
     private final IOrderService orderService;
+    private final IPointTransactionService pointTransactionService;
     @Override
     public VNPayResponse createVNPayPayment(HttpServletRequest request) {
         String bankCode = request.getParameter("bankCode");
@@ -58,5 +60,8 @@ public class VNPayPaymentServiceImpl implements IVNPayPaymentService {
                 .build();
         paymentHistoryService.addPaymentHistory(paymentHistoryDto);
         orderService.updateOrderStatus(paymentHistoryDto.getOrderId(), status.equals("00") ? OrderStatus.CONFIRMED : OrderStatus.CANCELLED);
+        if(status.equals("00")) {
+            pointTransactionService.savePointForUser(orderService.getOrderByOrderId(paymentHistoryDto.getOrderId()).getUser().getUserId(), paymentHistoryDto.getOrderId());
+        }
     }
 }
