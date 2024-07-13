@@ -55,6 +55,7 @@ public class Order {
         ZonedDateTime nowInVietnam = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         this.createdDate = nowInVietnam.toLocalDateTime();
         this.lastModifiedDate = nowInVietnam.toLocalDateTime();
+        this.orderDate = nowInVietnam.toLocalDateTime();
     }
 
     @PreUpdate

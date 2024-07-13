@@ -49,12 +49,15 @@ public class CustomerVoucher {
         ZonedDateTime nowInVietnam = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         this.createdDate = nowInVietnam.toLocalDateTime();
         this.lastModifiedDate = nowInVietnam.toLocalDateTime();
+        this.assignedDate = nowInVietnam.toLocalDateTime();
+        this.usedDate = nowInVietnam.toLocalDateTime();
     }
 
     @PreUpdate
     protected void onUpdate() {
         ZonedDateTime nowInVietnam = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         this.lastModifiedDate = nowInVietnam.toLocalDateTime();
+        this.usedDate = nowInVietnam.toLocalDateTime();
     }
 
     @ManyToOne

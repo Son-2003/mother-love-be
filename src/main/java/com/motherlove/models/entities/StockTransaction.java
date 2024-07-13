@@ -46,6 +46,7 @@ public class StockTransaction {
         ZonedDateTime nowInVietnam = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         this.createdDate = nowInVietnam.toLocalDateTime();
         this.lastModifiedDate = nowInVietnam.toLocalDateTime();
+        this.stockTransactionDate = nowInVietnam.toLocalDateTime();
     }
 
     @PreUpdate
