@@ -59,12 +59,16 @@ public class Promotion {
         ZonedDateTime nowInVietnam = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         this.createdDate = nowInVietnam.toLocalDateTime();
         this.lastModifiedDate = nowInVietnam.toLocalDateTime();
+        this.startDate = nowInVietnam.toLocalDateTime();
+        this.endDate = nowInVietnam.toLocalDateTime();
     }
 
     @PreUpdate
     protected void onUpdate() {
         ZonedDateTime nowInVietnam = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         this.lastModifiedDate = nowInVietnam.toLocalDateTime();
+        this.startDate = nowInVietnam.toLocalDateTime();
+        this.endDate = nowInVietnam.toLocalDateTime();
     }
 
     @ManyToOne

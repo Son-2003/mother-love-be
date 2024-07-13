@@ -58,14 +58,14 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ProductDto> getCategory(@PathVariable long id) {
+    public ResponseEntity<ProductDto> getProduct(@PathVariable long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<ProductDto> addCategory(@RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) {
         ProductDto savedProduct = productService.addProduct(productDto);
         return ResponseEntity.ok(savedProduct);
     }
@@ -80,7 +80,7 @@ public class ProductController {
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ProductDto> deleteCategory(@PathVariable(name = "id") long id) {
+    public ResponseEntity<ProductDto> deleteProduct(@PathVariable(name = "id") long id) {
         ProductDto deletedProductDto = productService.deleteProduct(id);
         return ResponseEntity.ok(deletedProductDto);
     }
