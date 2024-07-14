@@ -7,6 +7,7 @@ import com.motherlove.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,7 @@ public class AddressController {
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
-    //TODO: authorize user has address permision
+    @PostAuthorize("@securityCheckerBean.checkAddressesPermission(returnObject)")
     public ResponseEntity<Object> getAllAddressByUserId(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
@@ -53,36 +54,36 @@ public class AddressController {
     }
 
     @GetMapping("{id}")
-    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @PostAuthorize("@securityCheckerBean.checkAddressPermission(returnObject)")
     public ResponseEntity<AddressDto> getAddress(@PathVariable long id) {
         return ResponseEntity.ok(mapEntityToDto(addressService.getAddressById(id)));
     }
 
     @PostMapping
-    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @PostAuthorize("@securityCheckerBean.checkAddressPermission(returnObject)")
     public ResponseEntity<AddressDto> addAddress(@RequestBody AddressDto addressDto) {
         return ResponseEntity.ok(mapEntityToDto(addressService.addAddress(addressDto)));
     }
 
     @PutMapping("/default")
-    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @PostAuthorize("@securityCheckerBean.checkAddressPermission(returnObject)")
     public ResponseEntity<AddressDto> setDefaultAddress(@RequestParam Long userId, @RequestParam Long addressOldId, @RequestParam Long addressNewId) {
         return ResponseEntity.ok(mapEntityToDto(addressService.setAddressDefault(userId, addressOldId, addressNewId)));
     }
 
     @PutMapping
-    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @PostAuthorize("@securityCheckerBean.checkAddressPermission(returnObject)")
     public ResponseEntity<AddressDto> updateAddress(@RequestBody AddressDto addressDto) {
         return ResponseEntity.ok(mapEntityToDto(addressService.updateAddress(addressDto)));
     }
 
     @DeleteMapping("/{id}")
-    //TODO: authorize user has address permision
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
+    @PostAuthorize("@securityCheckerBean.checkAddressPermission(returnObject)")
     public ResponseEntity<AddressDto> deleteAddress(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(mapEntityToDto(addressService.deleteAddress(id)));
     }

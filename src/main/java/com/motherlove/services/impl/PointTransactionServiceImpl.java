@@ -52,6 +52,8 @@ public class PointTransactionServiceImpl implements IPointTransactionService {
                 .user(user)
                 .points((long)(order.getTotalAmount() / 1000))
                 .build();
+        user.addPoint(pointTransaction.getPoints());
+
         return pointTransactionRepository.save(pointTransaction);
     }
 }

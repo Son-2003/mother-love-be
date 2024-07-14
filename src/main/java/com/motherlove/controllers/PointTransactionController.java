@@ -34,7 +34,6 @@ public class PointTransactionController {
 
     @GetMapping("/get-by-user")
     @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
-    //TODO: authorize user has permission with transation
     public ResponseEntity<Object> getAllTransactionByUserId(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,

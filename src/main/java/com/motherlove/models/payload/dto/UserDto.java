@@ -18,4 +18,5 @@ public class UserDto {
     private boolean isFirstLogin;
     private String image;
     private String roleName;
+    private String userName;
 }

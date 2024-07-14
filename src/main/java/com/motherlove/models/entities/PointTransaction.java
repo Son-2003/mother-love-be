@@ -52,7 +52,7 @@ public class PointTransaction {
         this.lastModifiedDate = nowInVietnam.toLocalDateTime();
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 }
