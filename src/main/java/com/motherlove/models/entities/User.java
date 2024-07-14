@@ -47,7 +47,7 @@ public class User {
     private int status;
 
     @Column(nullable = false)
-    private int point;
+    private long point = 0L;
 
     @Column(nullable = false)
     private boolean isFirstLogin;
@@ -88,7 +88,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Address> addresses;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<PointTransaction> pointTransactions;
 
     @OneToMany(mappedBy = "questioner")
@@ -106,4 +106,8 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "roleId", nullable = false)
     private Role role;
+
+    public void addPoint(long point) {
+        this.point += point;
+    }
 }
