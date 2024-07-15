@@ -2,6 +2,7 @@ package com.motherlove.services.impl;
 
 import com.motherlove.models.entities.*;
 import com.motherlove.models.enums.OrderStatus;
+import com.motherlove.models.exception.MotherLoveApiException;
 import com.motherlove.models.exception.ResourceNotFoundException;
 import com.motherlove.models.payload.dto.OrderDetailDto;
 import com.motherlove.models.payload.dto.OrderDto;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,12 +79,12 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderResponse updateOrderStatus(Long orderId, OrderStatus status) {
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
 
         order.setStatus(OrderStatus.CONFIRMED);
-        return mapOrderToOrderResponse(orderRepository.save(order));
+        mapOrderToOrderResponse(orderRepository.save(order));
     }
 
     @Override
@@ -173,6 +175,17 @@ public class OrderServiceImpl implements IOrderService {
         }else ordersPage = orderRepository.findAll(specification, pageable);
 
         return ordersPage.map(this::mapOrderToOrderResponse);
+    }
+
+    @Override
+    public OrderResponse updateOrderCompleted(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order"));
+        if(order.getStatus().equals(OrderStatus.CONFIRMED)){
+            order.setStatus(OrderStatus.COMPLETED);
+        }else throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Cannot change Completed status!");
+
+        return mapOrderToOrderResponse(orderRepository.save(order));
     }
 
     //map các dkien của user thành 1 specification
