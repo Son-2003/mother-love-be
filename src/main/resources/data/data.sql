@@ -42,3 +42,9 @@ VALUES
 INSERT INTO `promotion` (`promotion_name`, `available_quantity`, `description`, `quantity_of_gift`, `start_date`, `end_date`, `product_id`, `gift_id`, `status`)
 VALUES
     ('KM mua 1 tang 1', '50', 'Mua 1 tặng 1', 2, '2024-06-17', '2024-06-30', 1, 1, 1);
+
+INSERT INTO `blog` (`content`, `image`, `title`, `user_id`)
+VALUES  ('<h3><i><strong>Infant Formula Milk</strong></i></h3><p><i>If breastfeeding doesn’t work or you choose not to breastfeed, infant formula is the only suitable alternative to breast milk and should be your baby’s sole source.&nbsp;</i></p>', 'https://res.cloudinary.com/dhgg72vfy/image/upload/v1720593500/tzqzyg3imkx3zg5gsggh.jpg', 'Infant Formula Milk', '2'),
+        ('<h3><i><strong>Infant Formula Milk</strong></i></h3><p><i>If breastfeeding doesn’t work or you choose not to breastfeed, infant formula is the only suitable alternative to breast milk and should be your baby’s sole source.&nbsp;</i></p>', 'https://res.cloudinary.com/dhgg72vfy/image/upload/v1720593500/tzqzyg3imkx3zg5gsggh.jpg', 'Infant Formula Milk', '2'),
+        ('<h3><i><strong>Infant Formula Milk</strong></i></h3><p><i>If breastfeeding doesn’t work or you choose not to breastfeed, infant formula is the only suitable alternative to breast milk and should be your baby’s sole source.&nbsp;</i></p>', 'https://res.cloudinary.com/dhgg72vfy/image/upload/v1720593500/tzqzyg3imkx3zg5gsggh.jpg', 'Infant Formula Milk', '2'),
+        ('<h3><i><strong>Infant Formula Milk</strong></i></h3><p><i>If breastfeeding doesn’t work or you choose not to breastfeed, infant formula is the only suitable alternative to breast milk and should be your baby’s sole source.&nbsp;</i></p>', 'https://res.cloudinary.com/dhgg72vfy/image/upload/v1720593500/tzqzyg3imkx3zg5gsggh.jpg', 'Infant Formula Milk', '2');
