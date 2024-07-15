@@ -97,5 +97,13 @@ public class OrderController {
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 
+    @ApiResponse(responseCode = "201", description = "Http Status 200 SUCCESS")
+    @SecurityRequirement(name = "Bear Authentication")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
+    @PutMapping
+    public ResponseEntity<Object> updateOrderCompleted(@RequestParam Long orderId) {
+        return ResponseEntity.ok(orderService.updateOrderCompleted(orderId));
+    }
+
 
 }
