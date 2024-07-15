@@ -73,15 +73,17 @@ public class FeedbackServiceImpl implements IFeedbackService {
     }
 
     @Override
-    public FeedbackResponse searchFeedback(Map<String, Object> searchParams, Long productId) {
+    public FeedbackResponse searchFeedback(Map<String, Object> searchParams, Long productId, int pageNo, int pageSize, String sortBy, String sortDir) {
         Specification<Feedback> specification = specification(searchParams);
         FeedbackResponse feedbackResponse = new FeedbackResponse();
         Optional<Product> product = productRepository.findById(productId);
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         feedbackResponse.setProduct(mapper.map(product, ProductResponse.class));
-        List<FeedbackDetail> feedbackDetails = feedbackRepository.findAll(specification.and((root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("product").get("productId"), productId))).stream().map(this::mapToDetail).toList();
-        feedbackResponse.setFeedbackDetails(feedbackDetails);
+        Page<Feedback> feedbackDetails = feedbackRepository.findAll(specification.and((root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("product").get("productId"), productId)), pageable);
+        feedbackResponse.setFeedbackDetails(feedbackDetails.map(this::mapToDetail));
 
         return feedbackResponse;
     }
@@ -97,10 +99,9 @@ public class FeedbackServiceImpl implements IFeedbackService {
             FeedbackResponse feedbackResponse = new FeedbackResponse();
             feedbackResponse.setProduct(mapper.map(product, ProductResponse.class));
 
-            List<FeedbackDetail> feedbackDetails = feedbackRepository.findByProduct_ProductId(product.getProductId())
-                    .stream().map(this::mapToDetail).toList();
+            Page<Feedback> feedbackDetails = feedbackRepository.findByProduct_ProductId(product.getProductId(), pageable);
 
-            feedbackResponse.setFeedbackDetails(feedbackDetails);
+            feedbackResponse.setFeedbackDetails(feedbackDetails.map(this::mapToDetail));
             feedbackResponses.add(feedbackResponse);
         }
 
@@ -110,14 +111,15 @@ public class FeedbackServiceImpl implements IFeedbackService {
     }
 
     @Override
-    public FeedbackResponse viewFeedback(Long productId) {
+    public FeedbackResponse viewFeedback(Long productId, int pageNo, int pageSize, String sortBy, String sortDir) {
         Optional<Product> product = productRepository.findById(productId);
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         FeedbackResponse feedbackResponse = new FeedbackResponse();
         feedbackResponse.setProduct(mapper.map(product, ProductResponse.class));
-        List<FeedbackDetail> feedbackDetails = feedbackRepository.findByProduct_ProductId(productId)
-                .stream().map(this::mapToDetail).toList();
-        feedbackResponse.setFeedbackDetails(feedbackDetails);
+        Page<Feedback> feedbackDetails = feedbackRepository.findByProduct_ProductId(productId, pageable);
+        feedbackResponse.setFeedbackDetails(feedbackDetails.map(this::mapToDetail));
 
         return feedbackResponse;
     }
