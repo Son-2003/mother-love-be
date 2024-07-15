@@ -49,13 +49,23 @@ public class FeedbackController {
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @GetMapping("/product/{productId}")
-    public ResponseEntity<FeedbackResponse> getFeedbacksOfProduct(@PathVariable long productId){
-        return ResponseEntity.ok(feedbackService.viewFeedback(productId));
+    public ResponseEntity<FeedbackResponse> getFeedbacksOfProduct(
+            @PathVariable long productId,
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_FEEDBACK_ID, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+    ){
+        return ResponseEntity.ok(feedbackService.viewFeedback(productId, pageNo, pageSize, sortBy, sortDir));
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
     @GetMapping("/search/{productId}")
     public ResponseEntity<Object> searchFeedback(
+            @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY_FEEDBACK_ID, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
             @RequestParam(value = "rating", required = false) List<Integer> rating,
             @RequestParam(value = "productName", required = false) String productName,
             @RequestParam(value = "brandName", required = false) List<String> brandName,
@@ -73,7 +83,7 @@ public class FeedbackController {
         if (fullName != null) searchParams.put("fullName", fullName);
         if (userName != null) searchParams.put("userName", userName);
 
-        return ResponseEntity.ok(feedbackService.searchFeedback(searchParams, productId));
+        return ResponseEntity.ok(feedbackService.searchFeedback(searchParams, productId, pageNo, pageSize, sortBy, sortDir));
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")

@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @Getter
 @Setter
@@ -13,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class FeedbackResponse {
     private ProductResponse product;
-    private List<FeedbackDetail> feedbackDetails;
+    private Page<FeedbackDetail> feedbackDetails;
 }
