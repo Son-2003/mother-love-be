@@ -33,12 +33,14 @@ public class PaymentMethodController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     @GetMapping("{id}")
     public ResponseEntity<PaymentMethodDto> getPaymentMethod(@PathVariable long id){
         return ResponseEntity.ok(paymentMethodService.getPaymentMethod(id));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     public ResponseEntity<PaymentMethodResponse> getAllPaymentMethods(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,

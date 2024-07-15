@@ -48,6 +48,7 @@ public class VoucherController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     @GetMapping("/member")
     public ResponseEntity<Object> getVouchersOfMember(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
@@ -60,6 +61,7 @@ public class VoucherController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     @GetMapping("/manage")
     public ResponseEntity<Object> getAllVouchersInManage(
             @RequestParam(name = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,

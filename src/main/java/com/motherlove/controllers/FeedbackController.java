@@ -54,7 +54,6 @@ public class FeedbackController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
-    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN')")
     @GetMapping("/search/{productId}")
     public ResponseEntity<Object> searchFeedback(
             @RequestParam(value = "rating", required = false) List<Integer> rating,
@@ -78,6 +77,7 @@ public class FeedbackController {
     }
 
     @ApiResponse(responseCode = "200", description = "Http Status 200 SUCCESS")
+    @PreAuthorize("hasRole('ROLE_STAFF') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MEMBER')")
     @GetMapping("/order/{orderId}")
     public ResponseEntity<List<FeedbackDto>> getFeedbacksOfOrder(@PathVariable long orderId){
         return ResponseEntity.ok(feedbackService.viewFeedbackOfOrder(orderId));
