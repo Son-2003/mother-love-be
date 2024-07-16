@@ -1,15 +1,14 @@
 package com.motherlove.models.payload.dto;
 
 import com.motherlove.models.enums.OrderStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderDto {
     private Long orderId;
     private LocalDateTime orderDate;

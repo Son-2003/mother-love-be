@@ -24,6 +24,7 @@ public class AppConstants {
     public static final String DEFAULT_SORT_BY_ADDRESS_ID = "addressId";
     public static final String DEFAULT_SORT_BY_BRAND_ID = "brandId";
     public static final String DEFAULT_SORT_BY_ORDER_ID = "orderId";
+    public static final String DEFAULT_SORT_BY_ORDER_CANCEL_ID = "cancelId";
     public static final String DEFAULT_SORT_BY_TRANSACTION_ID = "transactionId";
     public static final String DEFAULT_SORT_BY_PRODUCT_ID = "productId";
     public static final String DEFAULT_SORT_BY_STOCK_TRANSACTION_ID = "stockTransactionId";

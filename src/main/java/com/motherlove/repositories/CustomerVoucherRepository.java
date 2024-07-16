@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface CustomerVoucherRepository extends JpaRepository<CustomerVoucher, Long> {
     @Query("SELECT cv FROM CustomerVoucher cv " +
@@ -16,7 +17,12 @@ public interface CustomerVoucherRepository extends JpaRepository<CustomerVoucher
             "ORDER BY v.voucherId ASC")
     Page<CustomerVoucher> findVouchersOfMember(LocalDateTime now, Long userId, Pageable pageable);
     @Query("SELECT cv FROM CustomerVoucher cv " +
-            "WHERE cv.voucher.voucherId = :voucherId AND cv.user.userId = :userId ")
+            "WHERE cv.voucher.voucherId = :voucherId AND cv.user.userId = :userId AND cv.isUsed = false ")
     CustomerVoucher findCustomerVoucherByVoucher_VoucherIdAndUser_UserId(Long voucherId, Long userId);
+
+    @Query("SELECT cv FROM CustomerVoucher cv " +
+            "WHERE cv.voucher.voucherId = :voucherId AND cv.user.userId = :userId " +
+            "ORDER BY cv.createdDate DESC ")
+    List<CustomerVoucher> findCustomerVoucherExist(Long voucherId, Long userId);
     CustomerVoucher findCustomerVoucherByVoucher_VoucherId(Long voucherId);
 }

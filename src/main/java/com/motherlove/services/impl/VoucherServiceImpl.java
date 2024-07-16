@@ -133,7 +133,6 @@ public class VoucherServiceImpl implements IVoucherService {
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not valid!");
         }
 
-
         //Get Voucher had
         CustomerVoucher customerVoucherExist = customerVoucherRepository.findCustomerVoucherByVoucher_VoucherIdAndUser_UserId(voucherId, userId);
 
@@ -150,7 +149,10 @@ public class VoucherServiceImpl implements IVoucherService {
             customerVoucher.setUser(user);
             voucher.setQuantity(voucher.getQuantity() - 1);
             return mapToCustomerDto(customerVoucherRepository.save(customerVoucher));
-        }else{
+        }else if(customerVoucherExist.getQuantityAvailable() == 0){
+            customerVoucherExist.setQuantityAvailable(voucher.getQuantityUse());
+            return mapToCustomerDto(customerVoucherRepository.save(customerVoucherExist));
+        }else {
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Cannot save this voucher!");
         }
     }
@@ -162,7 +164,7 @@ public class VoucherServiceImpl implements IVoucherService {
             Voucher voucher = voucherRepository.findById(voucherId).orElseThrow(
                     () -> new ResourceNotFoundException("Voucher")
             );
-            CustomerVoucher customerVoucher = customerVoucherRepository.findCustomerVoucherByVoucher_VoucherIdAndUser_UserId(voucherId, userId);
+            CustomerVoucher customerVoucher = customerVoucherRepository.findCustomerVoucherExist(voucherId, userId).stream().findFirst().orElse(null);
             if(customerVoucher == null) {
                 throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Voucher is not belong to User!");
             }else if(voucher.getStartDate().isAfter(LocalDateTime.now()) || voucher.getEndDate().isBefore(LocalDateTime.now()))
@@ -174,10 +176,9 @@ public class VoucherServiceImpl implements IVoucherService {
             }else {
                 if(customerVoucher.getQuantityAvailable() == 1){
                     customerVoucher.setUsed(true);
-                }else {
-                    customerVoucher.setQuantityAvailable(customerVoucher.getQuantityAvailable() - 1);
-                    customerVoucher.setUsedDate(LocalDateTime.now());
                 }
+                customerVoucher.setQuantityAvailable(customerVoucher.getQuantityAvailable() - 1);
+                customerVoucher.setUsedDate(LocalDateTime.now());
                 customerVoucherRepository.save(customerVoucher);
                 order.setVoucher(voucher);
             }

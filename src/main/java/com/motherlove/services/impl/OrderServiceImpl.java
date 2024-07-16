@@ -157,8 +157,6 @@ public class OrderServiceImpl implements IOrderService {
                 throw new RuntimeException(e);
             }
         }
-
-
         return mapOrderToOrderResponse(orderCreated);
     }
 
