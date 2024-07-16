@@ -44,7 +44,6 @@ public class OrderCancelServiceImpl implements IOrderCancelService {
         Order order = orderRepository.findById(orderCancelReq.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order"));
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_OrderId(order.getOrderId());
-        CustomerVoucher customerVoucher = customerVoucherRepository.findCustomerVoucherExist(order.getVoucher().getVoucherId(), order.getUser().getUserId()).stream().findFirst().orElse(null);
 
         OrderCancel orderCancel = new OrderCancel();
         if (order.getStatus().equals(OrderStatus.PRE_ORDER) || order.getStatus().equals(OrderStatus.PENDING)) {
@@ -54,24 +53,26 @@ public class OrderCancelServiceImpl implements IOrderCancelService {
                         .orElseThrow(() -> new ResourceNotFoundException("Product"));
                 product.setQuantityProduct(product.getQuantityProduct() + orderDetail.getQuantity());
             }
+            if(order.getVoucher() != null){
+                CustomerVoucher customerVoucher = customerVoucherRepository.findCustomerVoucherExist(order.getVoucher().getVoucherId(), order.getUser().getUserId()).stream().findFirst().orElse(null);
+                if (customerVoucher.isUsed()) {
+                    customerVoucher.setUsed(false);
+                    customerVoucher.setQuantityAvailable(customerVoucher.getQuantityAvailable() + 1);
+                } else {
+                    customerVoucher.setQuantityAvailable(customerVoucher.getQuantityAvailable() + 1);
+                }
+                customerVoucherRepository.save(customerVoucher);
 
-            if (customerVoucher.isUsed()) {
-                customerVoucher.setUsed(false);
-                customerVoucher.setQuantityAvailable(customerVoucher.getQuantityAvailable() + 1);
-            } else {
-                customerVoucher.setQuantityAvailable(customerVoucher.getQuantityAvailable() + 1);
             }
-
             orderCancel.setOrder(order);
             orderCancel.setReason(orderCancelReq.getReason());
             orderCancel.setCancelDate(LocalDateTime.now());
+
         }else {
             throw new MotherLoveApiException(HttpStatus.BAD_REQUEST, "Cannot cancel this order!");
         }
-
         orderRepository.save(order);
         orderDetailRepository.saveAll(orderDetails);
-        customerVoucherRepository.save(customerVoucher);
         return mapOrderToOrderResponse(orderCancelRepository.save(orderCancel));
     }
 
